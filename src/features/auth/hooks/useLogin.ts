@@ -12,11 +12,25 @@ export function useLogin(): UseMutationResult<LoginResponseDto, Error, LoginRequ
   return useMutation({
     mutationFn: authService.login,
     onSuccess: async (data) => {
+      console.log('Login response:', data);
+      
+      // Ensure tokens are strings
+      const accessToken = typeof data.accessToken === 'string' 
+        ? data.accessToken 
+        : String(data.accessToken);
+      const refreshToken = typeof data.refreshToken === 'string'
+        ? data.refreshToken
+        : String(data.refreshToken);
+
+      console.log('User data:', data.user);
+      console.log('Access token:', accessToken);
+      console.log('Refresh token:', refreshToken);
+
       // Save auth data to store and secure storage
       await setAuth({
         user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        accessToken,
+        refreshToken,
       });
     },
     onError: (error) => {

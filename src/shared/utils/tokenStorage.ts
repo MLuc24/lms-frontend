@@ -60,7 +60,32 @@ export const tokenStorage = {
    * Save user data (stringified JSON)
    */
   async setUser(user: Record<string, any>): Promise<void> {
-    await SecureStore.setItemAsync(STORAGE_KEYS.USER, JSON.stringify(user));
+    try {
+      if (!user) {
+        console.error('Cannot save undefined user');
+        return;
+      }
+
+      // Sanitize user object - convert dates to strings
+      const sanitizedUser = Object.entries(user).reduce((acc, [key, value]) => {
+        if (value instanceof Date) {
+          acc[key] = value.toISOString();
+        } else if (value === null || value === undefined) {
+          acc[key] = null;
+        } else if (typeof value === 'object') {
+          acc[key] = JSON.parse(JSON.stringify(value)); // Deep clone and sanitize
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Record<string, any>);
+
+      const userString = JSON.stringify(sanitizedUser);
+      await SecureStore.setItemAsync(STORAGE_KEYS.USER, userString);
+    } catch (error) {
+      console.error('Failed to save user:', error, user);
+      throw error;
+    }
   },
 
   /**
