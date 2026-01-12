@@ -6,6 +6,8 @@ import { Input } from '@/shared/components/Input';
 import { Button } from '@/shared/components/Button';
 import { useChangePassword } from '../hooks/useChangePassword';
 import { changePasswordSchema, type ChangePasswordFormData } from '../schemas';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AppColors } from '@/config/colors';
 
 interface ChangePasswordFormProps {
   onSuccess?: () => void;
@@ -61,6 +63,7 @@ export function ChangePasswordForm({ onSuccess, onCancel }: ChangePasswordFormPr
             showPasswordToggle={true}
             autoComplete="password"
             error={errors.currentPassword?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />
@@ -79,6 +82,7 @@ export function ChangePasswordForm({ onSuccess, onCancel }: ChangePasswordFormPr
             showPasswordToggle={true}
             autoComplete="password"
             error={errors.newPassword?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />
@@ -96,6 +100,7 @@ export function ChangePasswordForm({ onSuccess, onCancel }: ChangePasswordFormPr
             secureTextEntry={true}
             showPasswordToggle={true}
             error={errors.confirmPassword?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />

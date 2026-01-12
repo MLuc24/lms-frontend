@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,6 +7,8 @@ import { Button } from '@/shared/components/Button';
 import { useLogin } from '../hooks/useLogin';
 import { loginSchema, type LoginFormData } from '../schemas';
 import { router } from 'expo-router';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { AppColors } from '@/config/colors';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -15,7 +17,6 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginFormProps) {
-  const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
   const loginMutation = useLogin();
 
   const {
@@ -35,8 +36,8 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
   const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync({
-        email: loginMethod === 'email' ? data.email : undefined,
-        phone: loginMethod === 'phone' ? data.phone : undefined,
+        email: data.email,
+        phone: undefined,
         password: data.password,
       });
 
@@ -50,83 +51,31 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
     }
   };
 
+  const handleGuestLogin = () => {
+    // Navigate to home without authentication
+    router.replace('/(tabs)');
+  };
+
   return (
     <View className="w-full">
-      {/* Login Method Toggle */}
-      <View className="flex-row mb-4 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-        <Pressable
-          onPress={() => setLoginMethod('email')}
-          className={`flex-1 py-2 rounded-md ${
-            loginMethod === 'email'
-              ? 'bg-white dark:bg-gray-700'
-              : 'bg-transparent'
-          }`}
-        >
-          <Text
-            className={`text-center font-medium ${
-              loginMethod === 'email'
-                ? 'text-primary-500'
-                : 'text-gray-500 dark:text-gray-400'
-            }`}
-          >
-            Email
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setLoginMethod('phone')}
-          className={`flex-1 py-2 rounded-md ${
-            loginMethod === 'phone'
-              ? 'bg-white dark:bg-gray-700'
-              : 'bg-transparent'
-          }`}
-        >
-          <Text
-            className={`text-center font-medium ${
-              loginMethod === 'phone'
-                ? 'text-primary-500'
-                : 'text-gray-500 dark:text-gray-400'
-            }`}
-          >
-            Phone
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* Email or Phone Input */}
-      {loginMethod === 'email' ? (
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, value } }) => (
-            <Input
-              label="Email"
-              value={value || ''}
-              onChangeText={onChange}
-              placeholder="your@email.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              error={errors.email?.message}
-            />
-          )}
-        />
-      ) : (
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field: { onChange, value } }) => (
-            <Input
-              label="Phone Number"
-              value={value || ''}
-              onChangeText={onChange}
-              placeholder="+1234567890"
-              keyboardType="phone-pad"
-              autoComplete="tel"
-              error={errors.phone?.message}
-            />
-          )}
-        />
-      )}
+      {/* Email Input */}
+      <Controller
+        control={control}
+        name="email"
+        render={({ field: { onChange, value } }) => (
+          <Input
+            label="Email address"
+            value={value || ''}
+            onChangeText={onChange}
+            placeholder="Email address"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            error={errors.email?.message}
+            iconLeft={<MaterialIcons name="email" size={20} color={AppColors.icon.email} />}
+          />
+        )}
+      />
 
       {/* Password Input */}
       <Controller
@@ -137,11 +86,12 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
             label="Password"
             value={value}
             onChangeText={onChange}
-            placeholder="Enter your password"
+            placeholder="Password"
             secureTextEntry={true}
             showPasswordToggle={true}
             autoComplete="password"
             error={errors.password?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />
@@ -153,7 +103,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
         accessibilityRole="button"
         accessibilityLabel="Forgot password"
       >
-        <Text className="text-sm text-primary-500 font-medium">
+        <Text className="text-sm text-blue-500 font-medium">
           Forgot Password?
         </Text>
       </Pressable>
@@ -165,18 +115,20 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
         </Text>
       )}
 
-      {/* Submit Button */}
+      {/* Login Button */}
       <Button
         onPress={handleSubmit(onSubmit)}
         isLoading={loginMutation.isPending}
         disabled={loginMutation.isPending}
         className="mb-4"
+        variant="primary"
+        size="lg"
       >
-        Login
+        Log in
       </Button>
 
       {/* Register Link */}
-      <View className="flex-row justify-center">
+      <View className="flex-row justify-center mb-6">
         <Text className="text-gray-600 dark:text-gray-400">
           Don't have an account?{' '}
         </Text>
@@ -185,11 +137,30 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
           accessibilityRole="button"
           accessibilityLabel="Create account"
         >
-          <Text className="text-primary-500 font-semibold">
-            Sign Up
+          <Text className="text-blue-500 font-semibold">
+            Sign up
           </Text>
         </Pressable>
       </View>
+
+      {/* Divider */}
+      <View className="flex-row items-center mb-6">
+        <View className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
+        <Text className="mx-4 text-gray-500 dark:text-gray-400">or</Text>
+        <View className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
+      </View>
+
+      {/* Continue as Guest Button */}
+      <Button
+        onPress={handleGuestLogin}
+        variant="outline"
+        size="lg"
+      >
+        <View className="flex-row items-center">
+          <Ionicons name="person" size={20} color={AppColors.icon.user} style={{ marginRight: 8 }} />
+          <Text className="font-semibold text-gray-900 dark:text-white">Continue as Guest</Text>
+        </View>
+      </Button>
     </View>
   );
 }

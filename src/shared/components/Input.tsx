@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, Pressable } from 'react-native';
 import { cn } from '@/shared/utils/cn';
+import { Ionicons } from '@expo/vector-icons';
+import { AppColors } from '@/config/colors';
 
 interface InputProps {
   label: string;
@@ -12,14 +14,16 @@ interface InputProps {
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   autoComplete?:
-    | 'email'
-    | 'password'
-    | 'name'
-    | 'tel'
-    | 'username'
-    | 'off';
+  | 'email'
+  | 'password'
+  | 'name'
+  | 'tel'
+  | 'username'
+  | 'off';
   editable?: boolean;
   showPasswordToggle?: boolean;
+  iconLeft?: React.ReactNode;
+  iconLeftColor?: string;
 }
 
 export function Input({
@@ -34,6 +38,8 @@ export function Input({
   autoComplete = 'off',
   editable = true,
   showPasswordToggle = false,
+  iconLeft,
+  iconLeftColor,
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPassword = secureTextEntry || showPasswordToggle;
@@ -45,6 +51,11 @@ export function Input({
         {label}
       </Text>
       <View className="relative">
+        {iconLeft && (
+          <View className="absolute left-4 top-0 bottom-0 justify-center z-10">
+            {iconLeft}
+          </View>
+        )}
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -56,8 +67,10 @@ export function Input({
           autoComplete={autoComplete}
           editable={editable}
           className={cn(
-            'w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-800',
+            'w-full py-3 rounded-lg border bg-white dark:bg-gray-800',
             'text-gray-900 dark:text-white',
+            iconLeft ? 'pl-12 pr-4' : 'px-4',
+            isPassword && showPasswordToggle ? 'pr-12' : '',
             error
               ? 'border-red-500'
               : 'border-gray-300 dark:border-gray-600',
@@ -67,13 +80,15 @@ export function Input({
         {isPassword && showPasswordToggle && (
           <Pressable
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            className="absolute right-3 top-3"
+            className="absolute right-3 top-0 bottom-0 justify-center"
             accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
             accessibilityRole="button"
           >
-            <Text className="text-sm text-primary-500 font-medium">
-              {isPasswordVisible ? 'Hide' : 'Show'}
-            </Text>
+            <Ionicons 
+              name={isPasswordVisible ? 'eye-off' : 'eye'} 
+              size={20} 
+              color={AppColors.text.secondary}
+            />
           </Pressable>
         )}
       </View>

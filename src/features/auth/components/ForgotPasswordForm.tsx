@@ -6,6 +6,8 @@ import { Input } from '@/shared/components/Input';
 import { Button } from '@/shared/components/Button';
 import { useForgotPassword } from '../hooks/useForgotPassword';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schemas';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AppColors } from '@/config/colors';
 
 interface ForgotPasswordFormProps {
   onSuccess?: () => void;
@@ -58,6 +60,7 @@ export function ForgotPasswordForm({ onSuccess, onBack }: ForgotPasswordFormProp
             autoCapitalize="none"
             autoComplete="email"
             error={errors.email?.message}
+            iconLeft={<MaterialIcons name="email" size={20} color={AppColors.icon.email} />}
           />
         )}
       />

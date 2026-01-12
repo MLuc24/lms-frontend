@@ -6,6 +6,8 @@ import { Input } from '@/shared/components/Input';
 import { Button } from '@/shared/components/Button';
 import { useResetPassword } from '../hooks/useResetPassword';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AppColors } from '@/config/colors';
 
 interface ResetPasswordFormProps {
   email?: string;
@@ -67,6 +69,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
             autoComplete="email"
             editable={!email}
             error={errors.email?.message}
+            iconLeft={<MaterialIcons name="email" size={20} color={AppColors.icon.email} />}
           />
         )}
       />
@@ -83,6 +86,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
             placeholder="000000"
             keyboardType="numeric"
             error={errors.otpCode?.message}
+            iconLeft={<MaterialIcons name="verified-user" size={20} color={AppColors.primary[500]} />}
           />
         )}
       />
@@ -101,6 +105,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
             showPasswordToggle={true}
             autoComplete="password"
             error={errors.newPassword?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />
@@ -118,6 +123,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
             secureTextEntry={true}
             showPasswordToggle={true}
             error={errors.confirmPassword?.message}
+            iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
       />

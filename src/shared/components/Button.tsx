@@ -38,7 +38,7 @@ export function Button({
         variant === 'primary' && 'bg-primary-500 active:bg-primary-600',
         variant === 'secondary' && 'bg-gray-500 active:bg-gray-600',
         variant === 'outline' &&
-          'border-2 border-primary-500 active:bg-primary-50 dark:active:bg-primary-900',
+        'border-2 border-primary-500 active:bg-primary-50 dark:active:bg-primary-900',
         variant === 'ghost' && 'active:bg-gray-100 dark:active:bg-gray-800',
         // Disabled state
         isDisabled && 'opacity-50',
@@ -53,20 +53,24 @@ export function Button({
           className="mr-2"
         />
       )}
-      <Text
-        className={cn(
-          'font-semibold',
-          size === 'sm' && 'text-sm',
-          size === 'md' && 'text-base',
-          size === 'lg' && 'text-lg',
-          variant === 'primary' && 'text-white',
-          variant === 'secondary' && 'text-white',
-          variant === 'outline' && 'text-primary-500',
-          variant === 'ghost' && 'text-gray-900 dark:text-white'
-        )}
-      >
-        {children}
-      </Text>
+      {typeof children === 'string' ? (
+        <Text
+          className={cn(
+            'font-semibold',
+            size === 'sm' && 'text-sm',
+            size === 'md' && 'text-base',
+            size === 'lg' && 'text-lg',
+            variant === 'primary' && 'text-white',
+            variant === 'secondary' && 'text-white',
+            variant === 'outline' && 'text-primary-500',
+            variant === 'ghost' && 'text-gray-900 dark:text-white'
+          )}
+        >
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
     </Pressable>
   );
 }
