@@ -92,14 +92,14 @@ class ApiClient {
       // Get access token if available (unless skipAuth is true)
       const accessToken = options?.skipAuth ? null : await tokenStorage.getAccessToken();
       
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      };
+      const headers = new Headers(options?.headers);
+      if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+      }
 
       // Add Authorization header if token exists
       if (accessToken) {
-        headers['Authorization'] = `Bearer ${accessToken}`;
+        headers.set('Authorization', `Bearer ${accessToken}`);
       }
 
       const response = await fetch(url, {
