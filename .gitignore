@@ -55,6 +55,8 @@ coverage/
 # Project Specific
 .github/
 .shared/
+.codex/
+.kiro/
 
 # Metro
 .metro-health-check*

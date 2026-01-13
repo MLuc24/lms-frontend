@@ -1,26 +1,23 @@
 import React from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function RegisterScreen() {
+  const insets = useSafeAreaInsets();
+
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
       {/* Gradient Header Background */}
       <LinearGradient
-        colors={['#3B82F6', '#2563EB', '#1E40AF']}
+        colors={['#10B981', '#059669', '#047857']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 280,
-        }}
+        style={StyleSheet.absoluteFillObject}
+        pointerEvents="none"
       />
       
       <SafeAreaView className="flex-1" edges={['top']}>
@@ -30,7 +27,7 @@ export default function RegisterScreen() {
         >
           <ScrollView
             className="flex-1"
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
+            contentContainerStyle={{ flexGrow: 1 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
@@ -76,14 +73,17 @@ export default function RegisterScreen() {
 
             {/* Form Card Container */}
             <View 
-              className="flex-1 bg-white dark:bg-gray-900 rounded-t-3xl px-6 pt-6 -mt-4"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 5,
-              }}
+              className="flex-1 bg-white dark:bg-gray-900 rounded-t-3xl px-6 pt-6 -mt-2"
+              style={[
+                {
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: -4 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 5,
+                },
+                { paddingBottom: 24 + insets.bottom },
+              ]}
             >
               <RegisterForm
                 onSuccess={() => {
