@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,7 @@ import { Input } from '@/shared/components/Input';
 import { Button } from '@/shared/components/Button';
 import { useResetPassword } from '../hooks/useResetPassword';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas';
+import { getUserFriendlyError } from '@/shared/utils/errorMessages';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AppColors } from '@/config/colors';
 
@@ -17,6 +18,7 @@ interface ResetPasswordFormProps {
 
 export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFormProps) {
   const resetPasswordMutation = useResetPassword();
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const {
     control,
@@ -42,16 +44,15 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
       });
       onSuccess?.();
     } catch (error) {
-      if (error instanceof Error) {
-        setError('root', { message: error.message });
-      }
+      const errorMessage = getUserFriendlyError(error);
+      setError('root', { message: errorMessage });
     }
   };
 
   return (
     <View className="w-full">
       <Text className="text-gray-600 dark:text-gray-400 mb-6 text-center">
-        Enter the 6-digit code sent to your email and create a new password.
+        Nhập mã 6 số đã được gửi đến email của bạn và tạo mật khẩu mới.
       </Text>
 
       {/* Email (read-only if provided) */}
@@ -69,6 +70,8 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
             autoComplete="email"
             editable={!email}
             error={errors.email?.message}
+            onFocus={() => setFocusedField('email')}
+            onBlur={() => setFocusedField(null)}
             iconLeft={<MaterialIcons name="email" size={20} color={AppColors.icon.email} />}
           />
         )}
@@ -80,12 +83,15 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
         name="otpCode"
         render={({ field: { onChange, value } }) => (
           <Input
-            label="Verification Code"
+            label="Mã xác nhận"
             value={value}
             onChangeText={onChange}
             placeholder="000000"
             keyboardType="numeric"
+            maxLength={6}
             error={errors.otpCode?.message}
+            onFocus={() => setFocusedField('otpCode')}
+            onBlur={() => setFocusedField(null)}
             iconLeft={<MaterialIcons name="verified-user" size={20} color={AppColors.primary[500]} />}
           />
         )}
@@ -97,14 +103,16 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
         name="newPassword"
         render={({ field: { onChange, value } }) => (
           <Input
-            label="New Password"
+            label="Mật khẩu mới"
             value={value}
             onChangeText={onChange}
-            placeholder="Min 8 characters"
+            placeholder="Tối thiểu 8 ký tự"
             secureTextEntry={true}
             showPasswordToggle={true}
             autoComplete="password"
             error={errors.newPassword?.message}
+            onFocus={() => setFocusedField('newPassword')}
+            onBlur={() => setFocusedField(null)}
             iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
@@ -116,13 +124,15 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
         name="confirmPassword"
         render={({ field: { onChange, value } }) => (
           <Input
-            label="Confirm New Password"
+            label="Xác nhận mật khẩu mới"
             value={value}
             onChangeText={onChange}
-            placeholder="Re-enter password"
+            placeholder="Nhập lại mật khẩu"
             secureTextEntry={true}
             showPasswordToggle={true}
             error={errors.confirmPassword?.message}
+            onFocus={() => setFocusedField('confirmPassword')}
+            onBlur={() => setFocusedField(null)}
             iconLeft={<MaterialIcons name="lock" size={20} color={AppColors.icon.password} />}
           />
         )}
@@ -131,27 +141,29 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
       {/* Password Requirements */}
       <View className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <Text className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-          Password must contain:
+          Mật khẩu phải chứa:
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • At least 8 characters
+          • Ít nhất 8 ký tự
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One uppercase letter
+          • Một chữ hoa
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One lowercase letter
+          • Một chữ thường
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One number
+          • Một chữ số
         </Text>
       </View>
 
       {/* Error Message */}
       {errors.root && (
-        <Text className="text-sm text-red-500 mb-4 text-center">
-          {errors.root.message}
-        </Text>
+        <View className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+          <Text className="text-sm text-red-600 dark:text-red-400 text-center">
+            {errors.root.message}
+          </Text>
+        </View>
       )}
 
       {/* Submit Button */}
@@ -161,7 +173,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
         disabled={resetPasswordMutation.isPending}
         className="mb-4"
       >
-        Reset Password
+        Đặt lại mật khẩu
       </Button>
 
       {/* Back Button */}
@@ -170,7 +182,7 @@ export function ResetPasswordForm({ email, onSuccess, onBack }: ResetPasswordFor
         onPress={onBack}
         disabled={resetPasswordMutation.isPending}
       >
-        Back
+        Quay lại
       </Button>
     </View>
   );

@@ -7,6 +7,8 @@ import type {
   LoginResponseDto,
   RefreshTokenRequestDto,
   RefreshTokenResponseDto,
+  CheckEmailRequestDto,
+  CheckEmailResponseDto,
   ForgotPasswordRequestDto,
   ForgotPasswordResponseDto,
   ResetPasswordRequestDto,
@@ -68,11 +70,19 @@ export const authService = {
   },
 
   /**
+   * Check if email exists (for password reset)
+   * POST /auth/check-email
+   */
+  async checkEmail(data: CheckEmailRequestDto): Promise<CheckEmailResponseDto> {
+    return apiClient.post<CheckEmailResponseDto>('/auth/check-email', data, true);
+  },
+
+  /**
    * Request password reset (sends OTP to email)
    * POST /auth/forgot-password
    */
   async forgotPassword(data: ForgotPasswordRequestDto): Promise<ForgotPasswordResponseDto> {
-    return apiClient.post<ForgotPasswordResponseDto>('/auth/forgot-password', data);
+    return apiClient.post<ForgotPasswordResponseDto>('/auth/forgot-password', data, true);
   },
 
   /**
@@ -80,7 +90,7 @@ export const authService = {
    * POST /auth/reset-password
    */
   async resetPassword(data: ResetPasswordRequestDto): Promise<ResetPasswordResponseDto> {
-    return apiClient.post<ResetPasswordResponseDto>('/auth/reset-password', data);
+    return apiClient.post<ResetPasswordResponseDto>('/auth/reset-password', data, true);
   },
 
   /**

@@ -15,10 +15,8 @@ export const ERROR_MESSAGES: Record<string, string> = {
   'Account not verified': 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email.',
   'Account is locked': 'Tài khoản đã bị khóa. Vui lòng liên hệ hỗ trợ.',
   
-  // Password errors
-  'Password too weak': 'Mật khẩu quá yếu. Vui lòng sử dụng mật khẩu mạnh hơn.',
-  'Passwords do not match': 'Mật khẩu xác nhận không khớp.',
-  'Current password is incorrect': 'Mật khẩu hiện tại không đúng.',
+  // Password reset errors
+  'Invalid or expired OTP': 'Mã OTP không đúng hoặc đã hết hạn. Vui lòng thử lại.',
   'Invalid OTP': 'Mã OTP không đúng hoặc đã hết hạn.',
   'OTP expired': 'Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.',
   

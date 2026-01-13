@@ -24,20 +24,21 @@ export default function ForgotPasswordScreen() {
           {/* Header */}
           <View className="mb-8">
             <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              {step === 'request' ? 'Forgot Password?' : 'Reset Password'}
+              {step === 'request' ? 'Quên mật khẩu?' : 'Đặt lại mật khẩu'}
             </Text>
             <Text className="text-base text-gray-600 dark:text-gray-400">
               {step === 'request'
-                ? "No worries, we'll send you reset instructions"
-                : 'Enter the code and create a new password'}
+                ? 'Đừng lo, chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu cho bạn'
+                : 'Nhập mã xác nhận và tạo mật khẩu mới'}
             </Text>
           </View>
 
           {/* Forms */}
           {step === 'request' ? (
             <ForgotPasswordForm
-              onSuccess={() => {
-                // Move to reset step
+              onSuccess={(submittedEmail) => {
+                // Save email and move to reset step
+                setEmail(submittedEmail);
                 setStep('reset');
               }}
               onBack={() => {

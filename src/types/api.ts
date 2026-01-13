@@ -84,6 +84,15 @@ export interface ForgotPasswordResponseDto {
   message: string;
 }
 
+// Check Email
+export interface CheckEmailRequestDto {
+  email: string;
+}
+
+export interface CheckEmailResponseDto {
+  exists: boolean;
+}
+
 // Reset Password
 export interface ResetPasswordRequestDto {
   email: string;
