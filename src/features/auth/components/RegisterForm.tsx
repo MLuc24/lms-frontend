@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,6 +49,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
     handleSubmit,
     formState: { errors },
     setError,
+    clearErrors,
     watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -60,6 +61,17 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
       displayName: '',
     },
   });
+
+  // Auto-hide error message after 4 seconds
+  useEffect(() => {
+    if (errors.root) {
+      const timer = setTimeout(() => {
+        clearErrors('root');
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errors.root, clearErrors]);
 
   const password = watch('password');
   const passwordStrength = calculatePasswordStrength(password || '');

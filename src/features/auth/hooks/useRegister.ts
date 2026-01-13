@@ -18,7 +18,8 @@ export function useRegister(): UseMutationResult<RegisterResponseDto, Error, Reg
       console.log('Registration successful:', data.message);
     },
     onError: (error) => {
-      console.error('Registration failed:', error);
+      // Log only to terminal, not console.error to avoid Expo toast
+      console.log('Registration failed:', error.message || error);
     },
   });
 }

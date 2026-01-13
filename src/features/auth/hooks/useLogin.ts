@@ -34,7 +34,8 @@ export function useLogin(): UseMutationResult<LoginResponseDto, Error, LoginRequ
       });
     },
     onError: (error) => {
-      console.error('Login failed:', error);
+      // Log only to terminal, not console.error to avoid Expo toast
+      console.log('Login failed:', error.message || error);
     },
   });
 }

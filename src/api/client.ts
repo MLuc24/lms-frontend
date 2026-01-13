@@ -104,8 +104,8 @@ class ApiClient {
         headers,
       });
 
-      // Handle 401 Unauthorized - try to refresh token
-      if (response.status === 401 && retry) {
+      // Handle 401 Unauthorized - try to refresh token (only if not skipAuth)
+      if (response.status === 401 && retry && !options?.skipAuth) {
         // If already refreshing, wait for it
         if (this.isRefreshing) {
           return new Promise((resolve, reject) => {

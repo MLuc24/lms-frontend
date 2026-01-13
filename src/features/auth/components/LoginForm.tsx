@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Animated } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +10,7 @@ import { router } from 'expo-router';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { AppColors } from '@/config/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getUserFriendlyError } from '@/shared/utils/errorMessages';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -26,6 +27,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
     handleSubmit,
     formState: { errors },
     setError,
+    clearErrors,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,6 +36,17 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
       password: '',
     },
   });
+
+  // Auto-hide error message after 4 seconds
+  useEffect(() => {
+    if (errors.root) {
+      const timer = setTimeout(() => {
+        clearErrors('root');
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errors.root, clearErrors]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -46,9 +59,8 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
       onSuccess?.();
       router.replace('/(tabs)');
     } catch (error) {
-      if (error instanceof Error) {
-        setError('root', { message: error.message });
-      }
+      const friendlyMessage = getUserFriendlyError(error);
+      setError('root', { message: friendlyMessage });
     }
   };
 
