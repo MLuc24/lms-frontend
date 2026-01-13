@@ -27,7 +27,7 @@ export const authService = {
    * POST /auth/register
    */
   async register(data: RegisterRequestDto): Promise<RegisterResponseDto> {
-    return apiClient.post<RegisterResponseDto>('/auth/register', data);
+    return apiClient.post<RegisterResponseDto>('/auth/register', data, true);
   },
 
   /**
@@ -35,7 +35,7 @@ export const authService = {
    * POST /auth/login
    */
   async login(data: LoginRequestDto): Promise<LoginResponseDto> {
-    return apiClient.post<LoginResponseDto>('/auth/login', data);
+    return apiClient.post<LoginResponseDto>('/auth/login', data, true);
   },
 
   /**

@@ -78,7 +78,7 @@ class ApiClient {
 
   async request<T>(
     endpoint: string,
-    options?: RequestInit,
+    options?: RequestInit & { skipAuth?: boolean },
     retry = true
   ): Promise<T> {
     // Ensure endpoint starts with / for proper URL construction
@@ -86,8 +86,8 @@ class ApiClient {
     const url = `${this.baseUrl}${normalizedEndpoint}`;
     
     try {
-      // Get access token if available
-      const accessToken = await tokenStorage.getAccessToken();
+      // Get access token if available (unless skipAuth is true)
+      const accessToken = options?.skipAuth ? null : await tokenStorage.getAccessToken();
       
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
@@ -158,10 +158,11 @@ class ApiClient {
     return this.request<T>(endpoint);
   }
 
-  post<T>(endpoint: string, data: any): Promise<T> {
+  post<T>(endpoint: string, data: any, skipAuth = false): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
+      skipAuth,
     });
   }
 
