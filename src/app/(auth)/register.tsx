@@ -11,7 +11,7 @@ export default function RegisterScreen() {
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
       {/* Gradient Header Background */}
       <LinearGradient
-        colors={['#10B981', '#059669', '#047857']}
+        colors={['#3B82F6', '#2563EB', '#1E40AF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -19,7 +19,7 @@ export default function RegisterScreen() {
           top: 0,
           left: 0,
           right: 0,
-          height: 240,
+          height: 280,
         }}
       />
       
@@ -30,9 +30,11 @@ export default function RegisterScreen() {
         >
           <ScrollView
             className="flex-1"
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            scrollEnabled={true}
           >
             {/* Header with Back Button */}
             <View className="pt-4 pb-6 px-6">
@@ -49,7 +51,7 @@ export default function RegisterScreen() {
               <View 
                 className="mb-4 items-center justify-center self-start"
                 style={{
-                  shadowColor: '#10B981',
+                  shadowColor: '#3B82F6',
                   shadowOffset: { width: 0, height: 8 },
                   shadowOpacity: 0.3,
                   shadowRadius: 16,
@@ -57,7 +59,7 @@ export default function RegisterScreen() {
                 }}
               >
                 <View className="w-16 h-16 bg-white rounded-2xl items-center justify-center">
-                  <Ionicons name="rocket" size={32} color="#10B981" />
+                  <Ionicons name="rocket" size={32} color="#3B82F6" />
                 </View>
               </View>
 
@@ -66,7 +68,7 @@ export default function RegisterScreen() {
                 <Text className="text-3xl font-extrabold text-white mb-2">
                   Join Us Today
                 </Text>
-                <Text className="text-base text-green-100">
+                <Text className="text-base text-blue-100">
                   Create your account and start learning
                 </Text>
               </View>
@@ -74,7 +76,7 @@ export default function RegisterScreen() {
 
             {/* Form Card Container */}
             <View 
-              className="flex-1 bg-white dark:bg-gray-900 rounded-t-3xl px-6 pt-6 -mt-2"
+              className="flex-1 bg-white dark:bg-gray-900 rounded-t-3xl px-6 pt-6 -mt-4"
               style={{
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: -4 },

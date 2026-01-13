@@ -31,6 +31,12 @@ export interface RegisterRequestDto {
   phone?: string;
   password: string;
   displayName: string;
+  // Device info (optional)
+  platform?: 'ios' | 'android' | 'web';
+  deviceModel?: string;
+  osVersion?: string;
+  appVersion?: string;
+  locale?: string;
 }
 
 export interface RegisterResponseDto {
@@ -43,6 +49,12 @@ export interface LoginRequestDto {
   email?: string;
   phone?: string;
   password: string;
+  // Device info (optional)
+  platform?: 'ios' | 'android';
+  deviceModel?: string;
+  osVersion?: string;
+  appVersion?: string;
+  locale?: string;
 }
 
 export interface LoginResponseDto {
@@ -59,6 +71,7 @@ export interface RefreshTokenRequestDto {
 
 export interface RefreshTokenResponseDto {
   accessToken: string;
+  refreshToken: string;
   expiresIn: number;
 }
 

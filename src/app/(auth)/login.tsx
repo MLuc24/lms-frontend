@@ -33,6 +33,8 @@ export default function LoginScreen() {
             contentContainerStyle={{ flexGrow: 1 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            scrollEnabled={true}
           >
             {/* Hero Section with Floating Icon */}
             <View className="pt-8 pb-6 px-6 items-center">

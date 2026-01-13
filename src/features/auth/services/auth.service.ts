@@ -1,4 +1,5 @@
 import { apiClient } from '@/api/client';
+import { getDeviceInfo } from '@/shared/utils/device';
 import type {
   RegisterRequestDto,
   RegisterResponseDto,
@@ -27,7 +28,13 @@ export const authService = {
    * POST /auth/register
    */
   async register(data: RegisterRequestDto): Promise<RegisterResponseDto> {
-    return apiClient.post<RegisterResponseDto>('/auth/register', data, true);
+    // Automatically include device information
+    const deviceInfo = getDeviceInfo();
+    const payload = {
+      ...data,
+      ...deviceInfo,
+    };
+    return apiClient.post<RegisterResponseDto>('/auth/register', payload, true);
   },
 
   /**
@@ -35,7 +42,13 @@ export const authService = {
    * POST /auth/login
    */
   async login(data: LoginRequestDto): Promise<LoginResponseDto> {
-    return apiClient.post<LoginResponseDto>('/auth/login', data, true);
+    // Automatically include device information
+    const deviceInfo = getDeviceInfo();
+    const payload = {
+      ...data,
+      ...deviceInfo,
+    };
+    return apiClient.post<LoginResponseDto>('/auth/login', payload, true);
   },
 
   /**

@@ -49,7 +49,7 @@ class ApiClient {
         return null;
       }
 
-      const response = await fetch(`${this.baseUrl}/auth/refresh-token`, {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,8 +65,11 @@ class ApiClient {
         return null;
       }
 
-      const { accessToken } = result.data;
+      const { accessToken, refreshToken: newRefreshToken } = result.data;
+      
+      // Save both new tokens (token rotation)
       await tokenStorage.setAccessToken(accessToken);
+      await tokenStorage.setRefreshToken(newRefreshToken);
       
       return accessToken;
     } catch (error) {
