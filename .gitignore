@@ -52,6 +52,10 @@ coverage/
 *.tmp
 .cache/
 
+# Project Specific
+.github/
+.shared/
+
 # Metro
 .metro-health-check*
 
