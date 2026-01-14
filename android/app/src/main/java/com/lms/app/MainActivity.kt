@@ -1,4 +1,4 @@
-package com.apptet.app
+package com.lms.app
 
 import android.os.Build
 import android.os.Bundle

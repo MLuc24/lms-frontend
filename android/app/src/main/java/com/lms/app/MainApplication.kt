@@ -1,4 +1,4 @@
-package com.apptet.app
+package com.lms.app
 
 import android.app.Application
 import android.content.res.Configuration
