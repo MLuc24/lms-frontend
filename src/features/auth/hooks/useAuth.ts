@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/store/auth.store';
+import { useShallow } from 'zustand/react/shallow';
 import { useLogin } from './useLogin';
 import { useRegister } from './useRegister';
 import { useLogout } from './useLogout';
@@ -13,11 +14,13 @@ import { useChangePassword } from './useChangePassword';
  */
 export function useAuth() {
   // Auth state from Zustand
-  const { user, isAuthenticated, isLoading } = useAuthStore((state) => ({
-    user: state.user,
-    isAuthenticated: state.isAuthenticated,
-    isLoading: state.isLoading,
-  }));
+  const { user, isAuthenticated, isLoading } = useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      isAuthenticated: state.isAuthenticated,
+      isLoading: state.isLoading,
+    }))
+  );
 
   // Auth mutations
   const loginMutation = useLogin();

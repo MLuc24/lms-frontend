@@ -1,16 +1,19 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
+import { useShallow } from 'zustand/react/shallow';
 import type { UserResponseDto } from '@/types';
 
 /**
  * Hook for fetching user profile
  */
 export function useProfile(): UseQueryResult<UserResponseDto, Error> {
-  const { isAuthenticated, setUser } = useAuthStore((state) => ({
-    isAuthenticated: state.isAuthenticated,
-    setUser: state.setUser,
-  }));
+  const { isAuthenticated, setUser } = useAuthStore(
+    useShallow((state) => ({
+      isAuthenticated: state.isAuthenticated,
+      setUser: state.setUser,
+    }))
+  );
 
   return useQuery({
     queryKey: ['auth', 'profile'],

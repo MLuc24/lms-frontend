@@ -1,16 +1,19 @@
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
+import { useShallow } from 'zustand/react/shallow';
 import type { LogoutRequestDto, LogoutResponseDto } from '@/types';
 
 /**
  * Hook for user logout
  */
 export function useLogout(): UseMutationResult<LogoutResponseDto, Error, void> {
-  const { refreshToken, clearAuth } = useAuthStore((state) => ({
-    refreshToken: state.refreshToken,
-    clearAuth: state.clearAuth,
-  }));
+  const { refreshToken, clearAuth } = useAuthStore(
+    useShallow((state) => ({
+      refreshToken: state.refreshToken,
+      clearAuth: state.clearAuth,
+    }))
+  );
 
   return useMutation({
     mutationFn: async () => {

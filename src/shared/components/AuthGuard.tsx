@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { useRouter, useSegments } from 'expo-router';
 import { useAuthStore } from '@/store/auth.store';
+import { useShallow } from 'zustand/react/shallow';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -16,10 +17,12 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const segments = useSegments();
-  const { isAuthenticated, isLoading } = useAuthStore((state) => ({
-    isAuthenticated: state.isAuthenticated,
-    isLoading: state.isLoading,
-  }));
+  const { isAuthenticated, isLoading } = useAuthStore(
+    useShallow((state) => ({
+      isAuthenticated: state.isAuthenticated,
+      isLoading: state.isLoading,
+    }))
+  );
 
   useEffect(() => {
     if (isLoading) {

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, Pressable } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
@@ -9,8 +9,19 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { logout, isLoggingOut } = useAuth();
+  const { logout, isLoggingOut, profile, user, isLoadingProfile } = useAuth();
   const { stats } = profileMock;
+  const profileData = profile ?? user;
+  const displayName = profileData?.displayName ?? profileMock.name;
+  const memberSince = profileData?.createdAt
+    ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+      })
+    : profileMock.memberSince;
+  const statusLabel = profileData?.status
+    ? profileData.status.charAt(0).toUpperCase() + profileData.status.slice(1)
+    : 'Active';
 
   return (
     <SafeAreaView className="flex-1 bg-[#f6f7fb]">
@@ -37,12 +48,18 @@ export default function ProfileScreen() {
                 <Ionicons name="create" size={18} color="#fff" />
               </Pressable>
             </View>
-            <Text className="mt-5 text-2xl font-semibold text-slate-900">
-              {profileMock.name}
-            </Text>
-            <Text className="mt-2 text-base text-slate-500">
-              Learning {profileMock.learningLanguage} ({profileMock.learningFlag})
-            </Text>
+            {isLoadingProfile && !profileData ? (
+              <ActivityIndicator className="mt-6" size="small" color="#0ea5e9" />
+            ) : (
+              <>
+                <Text className="mt-5 text-2xl font-semibold text-slate-900">
+                  {displayName}
+                </Text>
+                <Text className="mt-2 text-base text-slate-500">
+                  Status: {statusLabel}
+                </Text>
+              </>
+            )}
           </View>
         </View>
 
@@ -118,7 +135,7 @@ export default function ProfileScreen() {
 
         <View className="mt-10 items-center px-6">
           <Text className="text-sm text-slate-400">
-            Member since {profileMock.memberSince}
+            Member since {memberSince}
           </Text>
           <Pressable
             onPress={() => logout()}
