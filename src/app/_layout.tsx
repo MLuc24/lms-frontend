@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ForegroundNotificationListener } from '@/features/notifications/components/ForegroundNotificationListener';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -14,6 +15,7 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ForegroundNotificationListener />
       <Stack
         screenOptions={{
           headerShown: false,

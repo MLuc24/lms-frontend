@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useShallow } from 'zustand/react/shallow';
 import { useRouter } from 'expo-router';
 import type { LogoutRequestDto, LogoutResponseDto } from '@/types';
+import { deactivatePushToken } from '@/features/notifications/services/notification.service';
 
 /**
  * Hook for user logout
@@ -21,6 +22,11 @@ export function useLogout(): UseMutationResult<LogoutResponseDto, Error, void> {
     mutationFn: async () => {
       if (!refreshToken) {
         throw new Error('No refresh token available');
+      }
+      try {
+        await deactivatePushToken();
+      } catch (error) {
+        console.log('Failed to deactivate push token:', error);
       }
       return authService.logout({ refreshToken });
     },

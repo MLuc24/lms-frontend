@@ -124,6 +124,36 @@ export interface LogoutResponseDto {
   message: string;
 }
 
+// Push Tokens / Notifications
+export interface RegisterPushTokenRequestDto {
+  token: string;
+  provider: 'apns' | 'fcm';
+  platform: 'ios' | 'android';
+  deviceModel?: string;
+  osVersion?: string;
+  appVersion?: string;
+  locale?: string;
+}
+
+export interface RegisterPushTokenResponseDto {
+  message: string;
+  deviceId: string;
+}
+
+export interface DeactivatePushTokenRequestDto {
+  token: string;
+}
+
+export interface DeactivatePushTokenResponseDto {
+  message: string;
+}
+
+export interface SendTestPushResponseDto {
+  message: string;
+  successCount: number;
+  failureCount: number;
+}
+
 // Pagination
 export interface PaginationParams {
   page?: number;

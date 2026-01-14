@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "AppTet",
-    "slug": "AppTet",
+    "name": "LMS",
+    "slug": "LMS",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "apptet",
+    "scheme": "lms",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.apptet.app"
+      "bundleIdentifier": "com.lms.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.apptet.app"
+      "package": "com.lms.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
