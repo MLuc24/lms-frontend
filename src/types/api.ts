@@ -20,6 +20,7 @@ export interface UserResponseDto {
   phone?: string;
   displayName: string;
   avatarAssetId?: string;
+  avatarUrl?: string;
   status: 'active' | 'suspended' | 'deleted';
   lastLoginAt?: string; // ISO date string
   createdAt: string; // ISO date string

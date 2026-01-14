@@ -12,24 +12,22 @@ import { useUploadAvatar } from './useUploadAvatar';
 import { useProfile } from './useProfile';
 
 export function useAvatarUploader() {
-  const { data: profile } = useProfile();
+  const { data: profile, refetch } = useProfile();
   const [localImageUri, setLocalImageUri] = useState<string | null>(null);
-  const [uploadedPublicUrl, setUploadedPublicUrl] = useState<string | null>(null);
   
   const uploadAvatar = useUploadAvatar({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       Alert.alert('Success', 'Avatar uploaded successfully!');
       setLocalImageUri(null);
-      // Store the public URL from the upload response
-      if (data.publicUrl) {
-        setUploadedPublicUrl(data.publicUrl);
-      }
+      // Refetch profile to get updated avatarUrl from backend
+      await refetch();
     },
     onError: (error) => {
       Alert.alert(
         'Upload Failed',
         error.message || 'Failed to upload avatar. Please try again.'
       );
+      setLocalImageUri(null);
     },
   });
 
@@ -81,10 +79,9 @@ export function useAvatarUploader() {
     }
   }, [uploadAvatar]);
 
-  // Get avatar URL (prefer local preview > uploaded public URL)
-  // Note: Backend doesn't have a media endpoint, only stores assetId
-  // We rely on the publicUrl from R2 which is cached in AsyncStorage
-  const avatarUrl = localImageUri || uploadedPublicUrl;
+  // Get avatar URL from profile (backend provides avatarUrl)
+  // Use local preview while uploading
+  const avatarUrl = localImageUri || profile?.avatarUrl;
 
   return {
     avatarUrl,
