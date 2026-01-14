@@ -73,11 +73,6 @@ export function Input({
         {label}
       </Text>
       <View className="relative">
-        {iconLeft && (
-          <View className="absolute left-4 top-0 bottom-0 justify-center z-10">
-            {iconLeft}
-          </View>
-        )}
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -111,12 +106,28 @@ export function Input({
           }}
           {...props}
         />
+        {iconLeft && (
+          <View 
+            className="absolute left-4 top-0 bottom-0 justify-center"
+            pointerEvents="none"
+            style={{
+              zIndex: 10,
+              elevation: 10,
+            }}
+          >
+            {iconLeft}
+          </View>
+        )}
         {isPassword && showPasswordToggle && (
           <Pressable
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             className="absolute right-3 top-0 bottom-0 justify-center active:opacity-70"
             accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
             accessibilityRole="button"
+            style={{
+              zIndex: 10,
+              elevation: 10,
+            }}
           >
             <Ionicons
               name={isPasswordVisible ? 'eye-off' : 'eye'}
