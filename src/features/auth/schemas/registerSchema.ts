@@ -39,7 +39,6 @@ export const registerSchema = z
       .min(1, 'Please confirm your password'),
     displayName: z
       .string()
-      .min(1, 'Display name is required')
       .max(255, 'Display name too long'),
   })
   .refine(

@@ -49,7 +49,7 @@ class ApiClient {
         return null;
       }
 
-      const response = await fetch(`${this.baseUrl}/auth/refresh-token`, {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,8 +65,11 @@ class ApiClient {
         return null;
       }
 
-      const { accessToken } = result.data;
+      const { accessToken, refreshToken: newRefreshToken } = result.data;
+      
+      // Save both new tokens (token rotation)
       await tokenStorage.setAccessToken(accessToken);
+      await tokenStorage.setRefreshToken(newRefreshToken);
       
       return accessToken;
     } catch (error) {
@@ -89,14 +92,14 @@ class ApiClient {
       // Get access token if available (unless skipAuth is true)
       const accessToken = options?.skipAuth ? null : await tokenStorage.getAccessToken();
       
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      };
+      const headers = new Headers(options?.headers);
+      if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+      }
 
       // Add Authorization header if token exists
       if (accessToken) {
-        headers['Authorization'] = `Bearer ${accessToken}`;
+        headers.set('Authorization', `Bearer ${accessToken}`);
       }
 
       const response = await fetch(url, {

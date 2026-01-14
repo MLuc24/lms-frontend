@@ -16,7 +16,8 @@ export function useForgotPassword(): UseMutationResult<
       console.log('Password reset email sent:', data.message);
     },
     onError: (error) => {
-      console.error('Forgot password failed:', error);
+      // Log only to terminal, not console.error to avoid Expo toast
+      console.log('Forgot password failed:', error.message || error);
     },
   });
 }

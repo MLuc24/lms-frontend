@@ -1,4 +1,5 @@
 import { apiClient } from '@/api/client';
+import { getDeviceInfo } from '@/shared/utils/device';
 import type {
   RegisterRequestDto,
   RegisterResponseDto,
@@ -6,6 +7,8 @@ import type {
   LoginResponseDto,
   RefreshTokenRequestDto,
   RefreshTokenResponseDto,
+  CheckEmailRequestDto,
+  CheckEmailResponseDto,
   ForgotPasswordRequestDto,
   ForgotPasswordResponseDto,
   ResetPasswordRequestDto,
@@ -27,7 +30,13 @@ export const authService = {
    * POST /auth/register
    */
   async register(data: RegisterRequestDto): Promise<RegisterResponseDto> {
-    return apiClient.post<RegisterResponseDto>('/auth/register', data, true);
+    // Automatically include device information
+    const deviceInfo = getDeviceInfo();
+    const payload = {
+      ...data,
+      ...deviceInfo,
+    };
+    return apiClient.post<RegisterResponseDto>('/auth/register', payload, true);
   },
 
   /**
@@ -35,7 +44,13 @@ export const authService = {
    * POST /auth/login
    */
   async login(data: LoginRequestDto): Promise<LoginResponseDto> {
-    return apiClient.post<LoginResponseDto>('/auth/login', data, true);
+    // Automatically include device information
+    const deviceInfo = getDeviceInfo();
+    const payload = {
+      ...data,
+      ...deviceInfo,
+    };
+    return apiClient.post<LoginResponseDto>('/auth/login', payload, true);
   },
 
   /**
@@ -55,11 +70,19 @@ export const authService = {
   },
 
   /**
+   * Check if email exists (for password reset)
+   * POST /auth/check-email
+   */
+  async checkEmail(data: CheckEmailRequestDto): Promise<CheckEmailResponseDto> {
+    return apiClient.post<CheckEmailResponseDto>('/auth/check-email', data, true);
+  },
+
+  /**
    * Request password reset (sends OTP to email)
    * POST /auth/forgot-password
    */
   async forgotPassword(data: ForgotPasswordRequestDto): Promise<ForgotPasswordResponseDto> {
-    return apiClient.post<ForgotPasswordResponseDto>('/auth/forgot-password', data);
+    return apiClient.post<ForgotPasswordResponseDto>('/auth/forgot-password', data, true);
   },
 
   /**
@@ -67,7 +90,7 @@ export const authService = {
    * POST /auth/reset-password
    */
   async resetPassword(data: ResetPasswordRequestDto): Promise<ResetPasswordResponseDto> {
-    return apiClient.post<ResetPasswordResponseDto>('/auth/reset-password', data);
+    return apiClient.post<ResetPasswordResponseDto>('/auth/reset-password', data, true);
   },
 
   /**
