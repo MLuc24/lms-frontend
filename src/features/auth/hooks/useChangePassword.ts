@@ -13,7 +13,7 @@ export function useChangePassword(): UseMutationResult<
   return useMutation({
     mutationFn: authService.changePassword,
     onSuccess: (data) => {
-      console.log('Password changed successfully:', data.message);
+      // Password changed successfully
     },
     onError: (error) => {
       console.error('Password change failed:', error);

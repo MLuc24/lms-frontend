@@ -6,14 +6,27 @@ type ActionRowProps = {
   title: string;
   subtitle?: string;
   rightText?: string;
-  tone?: 'blue' | 'orange' | 'gray';
+  tone?: 'blue' | 'orange' | 'purple' | 'red' | 'gray';
   onPress?: () => void;
 };
 
 const toneMap = {
-  blue: '#2563eb',
-  orange: '#f97316',
-  gray: '#64748b',
+  blue: { icon: '#3b82f6', bg: '#dbeafe' },
+  orange: { icon: '#f97316', bg: '#fed7aa' },
+  purple: { icon: '#a855f7', bg: '#e9d5ff' },
+  red: { icon: '#ef4444', bg: '#fecaca' },
+  gray: { icon: '#64748b', bg: '#f1f5f9' },
+};
+
+const getIconTone = (icon: keyof typeof Ionicons.glyphMap): 'blue' | 'orange' | 'purple' | 'red' | 'gray' => {
+  if (icon === 'stats-chart') return 'blue';
+  if (icon === 'flame') return 'orange';
+  if (icon === 'notifications') return 'blue';
+  if (icon === 'alarm') return 'purple';
+  if (icon === 'settings') return 'blue';
+  if (icon === 'shield-checkmark') return 'purple';
+  if (icon === 'help-circle') return 'blue';
+  return 'gray';
 };
 
 export function ActionRow({
@@ -21,22 +34,28 @@ export function ActionRow({
   title,
   subtitle,
   rightText,
-  tone = 'blue',
+  tone,
   onPress,
 }: ActionRowProps) {
+  const iconTone = tone || getIconTone(icon);
+  const colors = toneMap[iconTone];
+
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between rounded-3xl bg-white px-5 py-4 shadow-sm"
+      className="flex-row items-center justify-between rounded-3xl bg-white px-5 py-4 shadow-sm active:opacity-80"
     >
-      <View className="flex-row items-center">
-        <View className="h-11 w-11 items-center justify-center rounded-full bg-[#eef5ff]">
-          <Ionicons name={icon} size={22} color={toneMap[tone]} />
+      <View className="flex-row items-center flex-1">
+        <View 
+          className="h-12 w-12 items-center justify-center rounded-full"
+          style={{ backgroundColor: colors.bg }}
+        >
+          <Ionicons name={icon} size={24} color={colors.icon} />
         </View>
-        <View className="ml-4">
-          <Text className="text-base font-semibold text-slate-900">{title}</Text>
+        <View className="ml-4 flex-1">
+          <Text className="text-base font-bold text-slate-900">{title}</Text>
           {subtitle ? (
-            <Text className="mt-1 text-sm text-slate-500">{subtitle}</Text>
+            <Text className="mt-1 text-sm font-medium text-slate-500">{subtitle}</Text>
           ) : null}
         </View>
       </View>

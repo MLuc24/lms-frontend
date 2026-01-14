@@ -21,6 +21,14 @@ class ApiClient {
 
   constructor() {
     this.baseUrl = ENV.API_URL;
+    
+    // Validate base URL
+    if (!this.baseUrl || this.baseUrl === 'undefined') {
+      console.error('❌ API base URL is not configured properly!');
+      console.error('ENV.API_URL:', this.baseUrl);
+      console.error('Check your .env file and restart the app');
+    }
+    
   }
 
   /**
@@ -180,6 +188,73 @@ class ApiClient {
     return this.request<T>(endpoint, {
       method: 'DELETE',
     });
+  }
+
+  /**
+   * Upload file (multipart/form-data)
+   * Supports both web File/Blob and React Native file objects
+   */
+  async upload<T>(
+    endpoint: string,
+    file: File | Blob | { uri: string; name: string; type: string },
+    fieldName = 'file',
+    additionalData?: Record<string, string>
+  ): Promise<T> {
+    const formData = new FormData();
+
+    // Handle React Native file object vs web File/Blob
+    if ('uri' in file) {
+      // React Native file object
+      formData.append(fieldName, file as any);
+    } else {
+      // Web File or Blob
+      formData.append(fieldName, file);
+    }
+
+    // Add additional form fields if provided
+    if (additionalData) {
+      Object.entries(additionalData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
+
+    try {
+      // Ensure endpoint starts with / for proper URL construction
+      const normalizedEndpoint = endpoint.startsWith('/')
+        ? endpoint
+        : `/${endpoint}`;
+      const url = `${this.baseUrl}${normalizedEndpoint}`;
+      
+      // Debug log
+      const accessToken = await tokenStorage.getAccessToken();
+
+      const headers = new Headers();
+      // Don't set Content-Type for FormData, browser/RN will set it with boundary
+      if (accessToken) {
+        headers.set('Authorization', `Bearer ${accessToken}`);
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      const result: ApiResponse<T> = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error?.message || `Upload failed: ${response.statusText}`
+        );
+      }
+
+      return result.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('File upload failed');
+    }
   }
 }
 

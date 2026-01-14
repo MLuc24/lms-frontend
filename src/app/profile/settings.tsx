@@ -3,9 +3,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScreenHeader } from '@/features/profile/components/ScreenHeader';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { logout, isLoggingOut } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-[#f6f7fb]">
@@ -127,9 +129,13 @@ export default function SettingsScreen() {
             streak.
           </Text>
 
-          <Pressable className="mt-8 items-center rounded-full border border-[#e2e8f0] bg-white py-4">
+          <Pressable 
+            onPress={() => logout()}
+            disabled={isLoggingOut}
+            className="mt-8 items-center rounded-full border border-[#e2e8f0] bg-white py-4"
+          >
             <Text className="text-base font-semibold text-slate-900">
-              Logout
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
             </Text>
           </Pressable>
 

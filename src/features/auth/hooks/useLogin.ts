@@ -12,8 +12,6 @@ export function useLogin(): UseMutationResult<LoginResponseDto, Error, LoginRequ
   return useMutation({
     mutationFn: authService.login,
     onSuccess: async (data) => {
-      console.log('Login response:', data);
-      
       // Ensure tokens are strings
       const accessToken = typeof data.accessToken === 'string' 
         ? data.accessToken 
@@ -21,10 +19,6 @@ export function useLogin(): UseMutationResult<LoginResponseDto, Error, LoginRequ
       const refreshToken = typeof data.refreshToken === 'string'
         ? data.refreshToken
         : String(data.refreshToken);
-
-      console.log('User data:', data.user);
-      console.log('Access token:', accessToken);
-      console.log('Refresh token:', refreshToken);
 
       // Save auth data to store and secure storage
       await setAuth({
@@ -34,8 +28,8 @@ export function useLogin(): UseMutationResult<LoginResponseDto, Error, LoginRequ
       });
     },
     onError: (error) => {
-      // Log only to terminal, not console.error to avoid Expo toast
-      console.log('Login failed:', error.message || error);
+      // Error will be handled by the component
+      console.error('Login failed:', error.message || error);
     },
   });
 }

@@ -13,11 +13,11 @@ export function useForgotPassword(): UseMutationResult<
   return useMutation({
     mutationFn: authService.forgotPassword,
     onSuccess: (data) => {
-      console.log('Password reset email sent:', data.message);
+      // Password reset email sent
     },
     onError: (error) => {
-      // Log only to terminal, not console.error to avoid Expo toast
-      console.log('Forgot password failed:', error.message || error);
+      // Error will be handled by the component
+      console.error('Forgot password failed:', error.message || error);
     },
   });
 }
