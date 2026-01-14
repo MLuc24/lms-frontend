@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "122967436790",
-    "project_id": "lms-app-d4ab2",
-    "storage_bucket": "lms-app-d4ab2.firebasestorage.app"
+    "project_number": "61887014422",
+    "project_id": "lms-8b8c7",
+    "storage_bucket": "lms-8b8c7.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:122967436790:android:3984e48780691ac8a5abd7",
+        "mobilesdk_app_id": "1:61887014422:android:13048f95a36e18fe7bf737",
         "android_client_info": {
           "package_name": "com.lms.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAZOMOy-HGrL_6VrifrjCm-7D1fsWxFuKs"
+          "current_key": "AIzaSyC-QtAtDRBpU_BEbHxb5AUQUlFg2g7SeHU"
         }
       ],
       "services": {

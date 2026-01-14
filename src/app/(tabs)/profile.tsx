@@ -17,9 +17,9 @@ export default function ProfileScreen() {
   const displayName = profileData?.displayName ?? profileMock.name;
   const memberSince = profileData?.createdAt
     ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-      })
+      month: 'long',
+      year: 'numeric',
+    })
     : profileMock.memberSince;
   const statusLabel = profileData?.status
     ? profileData.status.charAt(0).toUpperCase() + profileData.status.slice(1)
@@ -31,16 +31,14 @@ export default function ProfileScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="relative px-6 pt-8">
-          <View className="absolute -top-6 right-0 h-40 w-40 rounded-full bg-[#eef4ff]" />
-          <View className="absolute -top-10 left-0 h-28 w-28 rounded-full bg-[#f3f7ff]" />
-          <Text className="text-center text-3xl font-bold text-slate-900">
+        <View className="relative px-6 pt-6">
+          <Text className="text-center text-2xl font-extrabold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>
             Profile Overview
           </Text>
 
-          <View className="mt-8 items-center">
+          <View className="mt-6 items-center">
             <View className="relative">
-              <View className="h-36 w-36 items-center justify-center rounded-full bg-white shadow-lg border-4 border-white">
+              <View className="h-32 w-32 items-center justify-center rounded-full bg-[#e8e8e8] shadow-md">
                 {avatarUrl ? (
                   <Image
                     source={{ uri: avatarUrl }}
@@ -55,43 +53,43 @@ export default function ProfileScreen() {
                   />
                 )}
               </View>
-              <Pressable 
+              <Pressable
                 onPress={handlePickImage}
                 disabled={isUploading}
-                className="absolute bottom-0 right-0 h-12 w-12 items-center justify-center rounded-full bg-[#2d7cff] shadow-md"
+                className="absolute bottom-1 right-1 h-10 w-10 items-center justify-center rounded-full bg-[#3b82f6] shadow-lg"
               >
                 {isUploading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Ionicons name="create" size={20} color="#fff" />
+                  <Ionicons name="create-outline" size={18} color="#fff" />
                 )}
               </Pressable>
             </View>
             {isLoadingProfile && !profileData ? (
-              <ActivityIndicator className="mt-6" size="small" color="#0ea5e9" />
+              <ActivityIndicator className="mt-4" size="small" color="#3b82f6" />
             ) : (
               <>
-                <Text className="mt-5 text-3xl font-bold text-slate-900">
+                <Text className="mt-4 text-2xl font-extrabold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>
                   {displayName}
                 </Text>
-                <Text className="mt-2 text-base font-medium text-slate-500">
-                  {statusLabel} 🇪🇸
+                <Text className="mt-1 text-base font-normal text-[#8b8b8b]">
+                  Learning Spanish 🇪🇸
                 </Text>
               </>
             )}
           </View>
         </View>
 
-        <View className="mt-8 px-6">
-          <View className="flex-row">
-            <View className="mr-4 flex-1">
+        <View className="mt-6 px-6">
+          <View className="flex-row gap-3">
+            <View className="flex-1">
               <StatCard
                 icon="book"
                 value={stats[0].value}
                 label={stats[0].label}
               />
             </View>
-            <View className="mr-4 flex-1">
+            <View className="flex-1">
               <StatCard
                 icon="flame"
                 value={stats[1].value}
@@ -109,45 +107,39 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View className="mt-8 px-6">
+        <View className="mt-6 px-6 gap-3">
           <ActionRow
             icon="stats-chart"
             title="Learning Statistics"
             onPress={() => router.push('/profile/progress')}
           />
-          <View className="mt-3">
-            <ActionRow
-              icon="notifications"
-              title="Notification Settings"
-              onPress={() => router.push('/profile/notifications')}
-            />
-          </View>
-          <View className="mt-3">
-            <ActionRow
-              icon="settings"
-              title="App Settings"
-              onPress={() => router.push('/profile/settings')}
-            />
-          </View>
-          <View className="mt-3">
-            <ActionRow
-              icon="help-circle"
-              title="Help & Support"
-              onPress={() => router.push('/profile/settings')}
-            />
-          </View>
+          <ActionRow
+            icon="notifications"
+            title="Notification Settings"
+            onPress={() => router.push('/profile/notifications')}
+          />
+          <ActionRow
+            icon="settings"
+            title="App Settings"
+            onPress={() => router.push('/profile/settings')}
+          />
+          <ActionRow
+            icon="help-circle"
+            title="Help & Support"
+            onPress={() => router.push('/profile/settings')}
+          />
         </View>
 
-        <View className="mt-10 items-center px-6">
-          <Text className="text-sm font-medium text-slate-400">
+        <View className="mt-8 items-center px-6">
+          <Text className="text-sm font-normal text-[#c0c0c0]">
             Member since {memberSince}
           </Text>
           <Pressable
             onPress={() => logout()}
             disabled={isLoggingOut}
-            className="mt-6"
+            className="mt-4"
           >
-            <Text className="text-base font-bold text-rose-500">
+            <Text className="text-base font-semibold text-[#ff5252]">
               Log Out
             </Text>
           </Pressable>

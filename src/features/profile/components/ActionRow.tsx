@@ -11,17 +11,17 @@ type ActionRowProps = {
 };
 
 const toneMap = {
-  blue: { icon: '#3b82f6', bg: '#dbeafe' },
-  orange: { icon: '#f97316', bg: '#fed7aa' },
-  purple: { icon: '#a855f7', bg: '#e9d5ff' },
-  red: { icon: '#ef4444', bg: '#fecaca' },
-  gray: { icon: '#64748b', bg: '#f1f5f9' },
+  blue: { icon: '#5b99ff', bg: '#e3f2fd' },
+  orange: { icon: '#ff6b35', bg: '#ffe8e0' },
+  purple: { icon: '#9c6bff', bg: '#f3e8ff' },
+  red: { icon: '#ff5252', bg: '#ffe5e5' },
+  gray: { icon: '#9e9e9e', bg: '#f5f5f5' },
 };
 
 const getIconTone = (icon: keyof typeof Ionicons.glyphMap): 'blue' | 'orange' | 'purple' | 'red' | 'gray' => {
   if (icon === 'stats-chart') return 'blue';
   if (icon === 'flame') return 'orange';
-  if (icon === 'notifications') return 'blue';
+  if (icon === 'notifications') return 'orange';
   if (icon === 'alarm') return 'purple';
   if (icon === 'settings') return 'blue';
   if (icon === 'shield-checkmark') return 'purple';
@@ -43,29 +43,36 @@ export function ActionRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between rounded-3xl bg-white px-5 py-4 shadow-sm active:opacity-80"
+      className="flex-row items-center justify-between rounded-2xl bg-white px-4 py-3.5 active:opacity-80"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 2,
+        elevation: 1,
+      }}
     >
       <View className="flex-row items-center flex-1">
-        <View 
-          className="h-12 w-12 items-center justify-center rounded-full"
+        <View
+          className="h-10 w-10 items-center justify-center rounded-full"
           style={{ backgroundColor: colors.bg }}
         >
-          <Ionicons name={icon} size={24} color={colors.icon} />
+          <Ionicons name={icon} size={20} color={colors.icon} />
         </View>
-        <View className="ml-4 flex-1">
-          <Text className="text-base font-bold text-slate-900">{title}</Text>
+        <View className="ml-3 flex-1">
+          <Text className="text-base font-bold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>{title}</Text>
           {subtitle ? (
-            <Text className="mt-1 text-sm font-medium text-slate-500">{subtitle}</Text>
+            <Text className="mt-0.5 text-sm font-normal text-[#8b8b8b]">{subtitle}</Text>
           ) : null}
         </View>
       </View>
       <View className="flex-row items-center">
         {rightText ? (
-          <Text className="mr-2 text-sm font-medium text-slate-500">
+          <Text className="mr-2 text-sm font-normal text-[#8b8b8b]">
             {rightText}
           </Text>
         ) : null}
-        <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+        <Ionicons name="chevron-forward" size={20} color="#c0c0c0" />
       </View>
     </Pressable>
   );

@@ -11,33 +11,39 @@ type StatCardProps = {
 export function StatCard({ icon, value, label, highlight }: StatCardProps) {
   // Icon colors based on type
   const getIconColor = () => {
-    if (icon === 'book') return '#3b82f6'; // Blue for lessons
-    if (icon === 'flame') return '#f97316'; // Orange for streak
-    if (icon === 'trophy') return '#eab308'; // Yellow for XP
-    return '#2563eb';
+    if (icon === 'book') return '#5b99ff'; // Blue for lessons
+    if (icon === 'flame') return '#ff6b35'; // Orange for streak
+    if (icon === 'trophy') return '#ffc107'; // Yellow for XP
+    return '#3b82f6';
   };
 
-  const iconBgColor = highlight 
-    ? 'bg-orange-100' 
-    : icon === 'book' 
-      ? 'bg-blue-50' 
-      : icon === 'trophy'
-        ? 'bg-yellow-50'
-        : 'bg-slate-50';
+  const getIconBgColor = () => {
+    if (icon === 'book') return '#e3f2fd'; // Light blue for lessons
+    if (icon === 'flame') return '#ffffff'; // White for streak (highlighted)
+    if (icon === 'trophy') return '#fff9e6'; // Light yellow for XP
+    return '#f5f5f5';
+  };
 
   return (
     <View
-      className={`flex-1 items-center rounded-3xl px-3 py-5 ${
-        highlight ? 'bg-blue-50 border border-blue-100' : 'bg-white shadow-sm'
-      }`}
+      className={`flex-1 items-center rounded-2xl px-3 py-4 ${highlight ? 'bg-[#e3f2fd]' : 'bg-white'
+        }`}
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+      }}
     >
       <View
-        className={`h-12 w-12 items-center justify-center rounded-full ${iconBgColor}`}
+        className="h-10 w-10 items-center justify-center rounded-full"
+        style={{ backgroundColor: getIconBgColor() }}
       >
-        <Ionicons name={icon} size={24} color={getIconColor()} />
+        <Ionicons name={icon} size={20} color={getIconColor()} />
       </View>
-      <Text className="mt-3 text-3xl font-bold text-slate-900">{value}</Text>
-      <Text className="mt-1 text-sm font-medium text-slate-500">{label}</Text>
+      <Text className="mt-2 text-2xl font-extrabold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>{value}</Text>
+      <Text className="mt-0.5 text-xs font-normal text-[#8b8b8b]">{label}</Text>
     </View>
   );
 }
