@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "prestart": "node ../scripts/update-ip.js",
     "start": "expo start",
+    "start:clear": "expo start --clear",
+    "start:skip-ip": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
