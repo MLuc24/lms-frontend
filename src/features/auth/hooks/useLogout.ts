@@ -26,7 +26,6 @@ export function useLogout(): UseMutationResult<LogoutResponseDto, Error, void> {
       try {
         await deactivatePushToken();
       } catch (error) {
-        console.log('Failed to deactivate push token:', error);
       }
       return authService.logout({ refreshToken });
     },

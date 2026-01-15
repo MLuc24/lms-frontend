@@ -106,24 +106,24 @@ export function ChangePasswordForm({ onSuccess, onCancel }: ChangePasswordFormPr
       />
 
       {/* Password Requirements */}
-      <View className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-        <Text className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+      <View className="mb-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
+        <Text className="mb-1 text-xs text-gray-600 dark:text-gray-400">
           New password must contain:
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • At least 8 characters
+          - At least 8 characters
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One uppercase letter
+          - One uppercase letter
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One lowercase letter
+          - One lowercase letter
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • One number
+          - One number
         </Text>
         <Text className="text-xs text-gray-600 dark:text-gray-400">
-          • Different from current password
+          - Different from current password
         </Text>
       </View>
 

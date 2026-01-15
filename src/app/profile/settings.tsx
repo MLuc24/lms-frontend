@@ -96,6 +96,26 @@ export default function SettingsScreen() {
           </View>
 
           <Text className="mt-6 text-sm font-semibold uppercase tracking-widest text-slate-400">
+            Security
+          </Text>
+          <View className="mt-4 rounded-3xl bg-white shadow-sm">
+            <Pressable
+              onPress={() => router.push('/profile/change-password')}
+              className="flex-row items-center justify-between px-5 py-4"
+            >
+              <View className="flex-row items-center">
+                <View className="h-11 w-11 items-center justify-center rounded-full bg-[#e2e8f0]">
+                  <Ionicons name="key" size={20} color="#475569" />
+                </View>
+                <Text className="ml-4 text-base font-semibold text-slate-900">
+                  Change Password
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#94a3b8" />
+            </Pressable>
+          </View>
+
+          <Text className="mt-6 text-sm font-semibold uppercase tracking-widest text-slate-400">
             Data
           </Text>
           <View className="mt-4 rounded-3xl bg-white shadow-sm">
