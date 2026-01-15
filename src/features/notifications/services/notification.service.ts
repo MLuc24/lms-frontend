@@ -50,11 +50,6 @@ export async function registerPushToken(
   const token = tokenOverride ?? (await getToken(messaging));
   const deviceInfo = getDeviceInfo();
   const tokenSuffix = token.slice(-6);
-  console.log('[Push] Registering token', {
-    suffix: tokenSuffix,
-    platform: deviceInfo.platform,
-  });
-
   const payload: RegisterPushTokenRequestDto = {
     token,
     provider: 'fcm',
@@ -69,7 +64,6 @@ export async function registerPushToken(
     '/notification/push-tokens',
     payload
   );
-  console.log('[Push] Token registered', response);
   return response;
 }
 
@@ -79,23 +73,19 @@ export async function deactivatePushToken(
   const messaging = getMessaging();
   const token = tokenOverride ?? (await getToken(messaging));
   const tokenSuffix = token.slice(-6);
-  console.log('[Push] Deactivating token', { suffix: tokenSuffix });
   const payload: DeactivatePushTokenRequestDto = { token };
 
   const response = await apiClient.post<DeactivatePushTokenResponseDto>(
     '/notification/push-tokens/deactivate',
     payload
   );
-  console.log('[Push] Token deactivated', response);
   return response;
 }
 
 export async function sendTestPush(): Promise<SendTestPushResponseDto> {
-  console.log('[Push] Sending test notification');
   const response = await apiClient.post<SendTestPushResponseDto>(
     '/notification/test',
     {}
   );
-  console.log('[Push] Test notification response', response);
   return response;
 }

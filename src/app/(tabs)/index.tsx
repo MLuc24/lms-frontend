@@ -21,11 +21,9 @@ export default function HomeScreen() {
   const sendTestMutation = useMutation({
     mutationFn: sendTestPush,
     onSuccess: (data) => {
-      console.log('[Push] Test notification sent', data);
       Alert.alert('Push sent', data.message);
     },
     onError: (error: any) => {
-      console.log('[Push] Test notification failed', error);
       Alert.alert('Push failed', error?.message || 'Unable to send push');
     },
   });
@@ -42,7 +40,6 @@ export default function HomeScreen() {
         setTokenStatus('registering');
         setTokenMessage(null);
         const response = await registerPushToken(tokenOverride);
-        console.log('[Push] Registered in app state', response);
         if (!isActive) {
           return;
         }
