@@ -1,40 +1,38 @@
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { getMessaging, onMessage } from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+
+// Dynamically import to avoid Expo Go warnings
+let Notifications: any = null;
+try {
+  Notifications = require('expo-notifications');
+} catch (error) {
+  console.log('[Notifications] Not available in this environment');
+}
 
 export function ForegroundNotificationListener() {
   useEffect(() => {
-    const initChannel = async () => {
-      if (Platform.OS !== 'android') {
-        return;
-      }
+    if (!Notifications) {
+      return;
+    }
 
-      await notifee.createChannel({
-        id: 'default',
-        name: 'Default',
-        importance: AndroidImportance.HIGH,
+    try {
+      // Configure how notifications are handled when app is in foreground
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+        }),
       });
-    };
 
-    void initChannel();
-
-    const messaging = getMessaging();
-    const unsubscribe = onMessage(messaging, async (message) => {
-      const title = message.notification?.title || 'Notification';
-      const body = message.notification?.body || '';
-
-      await notifee.displayNotification({
-        title,
-        body,
-        android: {
-          channelId: 'default',
-          pressAction: { id: 'default' },
-        },
+      // Listen for notifications received while app is foregrounded
+      const subscription = Notifications.addNotificationReceivedListener((notification: any) => {
+        console.log('[Notification] Received in foreground:', notification);
       });
-    });
 
-    return () => unsubscribe();
+      return () => subscription.remove();
+    } catch (error) {
+      console.log('[Notifications] Listener setup failed:', error);
+    }
   }, []);
 
   return null;

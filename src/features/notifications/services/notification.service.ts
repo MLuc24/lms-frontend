@@ -1,11 +1,6 @@
-import {
-  AuthorizationStatus,
-  getMessaging,
-  getToken,
-  requestPermission,
-  registerDeviceForRemoteMessages,
-} from '@react-native-firebase/messaging';
-import { PermissionsAndroid, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { Platform } from 'react-native';
 import { apiClient } from '@/api/client';
 import { getDeviceInfo } from '@/shared/utils/device';
 import type {
@@ -17,25 +12,19 @@ import type {
 } from '@/types';
 
 async function ensureNotificationPermission(): Promise<void> {
-  if (Platform.OS === 'android' && typeof Platform.Version === 'number') {
-    if (Platform.Version >= 33) {
-      const result = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-      );
-      if (result !== PermissionsAndroid.RESULTS.GRANTED) {
-        throw new Error('Notification permission denied');
-      }
-    }
-    return;
+  if (!Device.isDevice) {
+    throw new Error('Push notifications only work on physical devices');
   }
 
-  const messaging = getMessaging();
-  const authStatus = await requestPermission(messaging);
-  const enabled =
-    authStatus === AuthorizationStatus.AUTHORIZED ||
-    authStatus === AuthorizationStatus.PROVISIONAL;
-
-  if (!enabled) {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  
+  if (finalStatus !== 'granted') {
     throw new Error('Notification permission denied');
   }
 }
@@ -43,11 +32,9 @@ async function ensureNotificationPermission(): Promise<void> {
 export async function registerPushToken(
   tokenOverride?: string
 ): Promise<RegisterPushTokenResponseDto> {
-  const messaging = getMessaging();
-  await registerDeviceForRemoteMessages(messaging);
   await ensureNotificationPermission();
 
-  const token = tokenOverride ?? (await getToken(messaging));
+  const token = tokenOverride ?? (await Notifications.getExpoPushTokenAsync()).data;
   const deviceInfo = getDeviceInfo();
   const tokenSuffix = token.slice(-6);
   console.log('[Push] Registering token', {
@@ -57,7 +44,7 @@ export async function registerPushToken(
 
   const payload: RegisterPushTokenRequestDto = {
     token,
-    provider: 'fcm',
+    provider: 'expo',
     platform: deviceInfo.platform,
     deviceModel: deviceInfo.deviceModel,
     osVersion: deviceInfo.osVersion,
@@ -76,8 +63,7 @@ export async function registerPushToken(
 export async function deactivatePushToken(
   tokenOverride?: string
 ): Promise<DeactivatePushTokenResponseDto> {
-  const messaging = getMessaging();
-  const token = tokenOverride ?? (await getToken(messaging));
+  const token = tokenOverride ?? (await Notifications.getExpoPushTokenAsync()).data;
   const tokenSuffix = token.slice(-6);
   console.log('[Push] Deactivating token', { suffix: tokenSuffix });
   const payload: DeactivatePushTokenRequestDto = { token };
