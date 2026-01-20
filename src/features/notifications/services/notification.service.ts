@@ -1,6 +1,5 @@
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import { apiClient } from '@/api/client';
 import { getDeviceInfo } from '@/shared/utils/device';
 import type {
@@ -11,16 +10,62 @@ import type {
   SendTestPushResponseDto,
 } from '@/types';
 
+// Lazy load notifications to avoid Expo Go errors
+let Notifications: any = null;
+let Device: any = null;
+let isConfigured = false;
+
+function loadNotifications() {
+  if (!Notifications) {
+    try {
+      Notifications = require('expo-notifications');
+      Device = require('expo-device');
+      
+      // Configure notification handler once
+      if (!isConfigured && Notifications) {
+        Notifications.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+          }),
+        });
+        isConfigured = true;
+      }
+    } catch (error) {
+      console.log('[Push] Failed to load expo-notifications');
+    }
+  }
+  return Notifications;
+}
+
+// Export for use in other files
+export { loadNotifications };
+
+// Check if running in Expo Go
+function isExpoGo(): boolean {
+  return Constants.appOwnership === 'expo';
+}
+
 async function ensureNotificationPermission(): Promise<void> {
+  if (isExpoGo()) {
+    throw new Error('Push notifications are not supported in Expo Go. Please use a development build.');
+  }
+
+  const Notif = loadNotifications();
+  if (!Notif || !Device) {
+    throw new Error('Notifications module not available');
+  }
+
   if (!Device.isDevice) {
     throw new Error('Push notifications only work on physical devices');
   }
 
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  const { status: existingStatus } = await Notif.getPermissionsAsync();
   let finalStatus = existingStatus;
   
   if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notif.requestPermissionsAsync();
     finalStatus = status;
   }
   
@@ -34,12 +79,16 @@ export async function registerPushToken(
 ): Promise<RegisterPushTokenResponseDto> {
   await ensureNotificationPermission();
 
-  const token = tokenOverride ?? (await Notifications.getExpoPushTokenAsync()).data;
+  const Notif = loadNotifications();
+  const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
   const deviceInfo = getDeviceInfo();
-  const tokenSuffix = token.slice(-6);
+  
+  // Map platform to provider (fcm for Android, apns for iOS)
+  const provider = Platform.OS === 'ios' ? 'apns' : 'fcm';
+  
   const payload: RegisterPushTokenRequestDto = {
     token,
-    provider: 'expo',
+    provider,
     platform: deviceInfo.platform,
     deviceModel: deviceInfo.deviceModel,
     osVersion: deviceInfo.osVersion,
@@ -57,8 +106,12 @@ export async function registerPushToken(
 export async function deactivatePushToken(
   tokenOverride?: string
 ): Promise<DeactivatePushTokenResponseDto> {
-  const token = tokenOverride ?? (await Notifications.getExpoPushTokenAsync()).data;
-  const tokenSuffix = token.slice(-6);
+  const Notif = loadNotifications();
+  if (!Notif) {
+    throw new Error('Notifications module not available');
+  }
+  
+  const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
   const payload: DeactivatePushTokenRequestDto = { token };
 
   const response = await apiClient.post<DeactivatePushTokenResponseDto>(

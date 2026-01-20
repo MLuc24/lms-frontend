@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type ActionRowProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -11,11 +12,31 @@ type ActionRowProps = {
 };
 
 const toneMap = {
-  blue: { icon: '#5b99ff', bg: '#e3f2fd' },
-  orange: { icon: '#ff6b35', bg: '#ffe8e0' },
-  purple: { icon: '#9c6bff', bg: '#f3e8ff' },
-  red: { icon: '#ff5252', bg: '#ffe5e5' },
-  gray: { icon: '#9e9e9e', bg: '#f5f5f5' },
+  blue: { 
+    icon: '#3b82f6', 
+    bg: ['#dbeafe', '#bfdbfe'] as [string, string],
+    shadow: '#3b82f6'
+  },
+  orange: { 
+    icon: '#f97316', 
+    bg: ['#fed7aa', '#fdba74'] as [string, string],
+    shadow: '#f97316'
+  },
+  purple: { 
+    icon: '#a855f7', 
+    bg: ['#f3e8ff', '#e9d5ff'] as [string, string],
+    shadow: '#a855f7'
+  },
+  red: { 
+    icon: '#ef4444', 
+    bg: ['#fee2e2', '#fecaca'] as [string, string],
+    shadow: '#ef4444'
+  },
+  gray: { 
+    icon: '#64748b', 
+    bg: ['#f1f5f9', '#e2e8f0'] as [string, string],
+    shadow: '#64748b'
+  },
 };
 
 const getIconTone = (icon: keyof typeof Ionicons.glyphMap): 'blue' | 'orange' | 'purple' | 'red' | 'gray' => {
@@ -43,36 +64,63 @@ export function ActionRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between rounded-2xl bg-white px-4 py-3.5 active:opacity-80"
+      className="flex-row items-center justify-between rounded-3xl bg-white px-5 py-4 mb-3 active:scale-[0.98]"
       style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.08,
-        shadowRadius: 2,
-        elevation: 1,
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 4,
       }}
     >
       <View className="flex-row items-center flex-1">
-        <View
-          className="h-10 w-10 items-center justify-center rounded-full"
-          style={{ backgroundColor: colors.bg }}
+        {/* Icon with gradient background */}
+        <LinearGradient
+          colors={colors.bg}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="h-12 w-12 items-center justify-center rounded-2xl"
+          style={{
+            shadowColor: colors.shadow,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+            elevation: 2,
+          }}
         >
-          <Ionicons name={icon} size={20} color={colors.icon} />
-        </View>
-        <View className="ml-3 flex-1">
-          <Text className="text-base font-bold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>{title}</Text>
+          <Ionicons name={icon} size={22} color={colors.icon} />
+        </LinearGradient>
+        
+        <View className="ml-4 flex-1">
+          <Text className="text-base font-bold text-slate-800 tracking-tight" style={{ fontFamily: 'System' }}>
+            {title}
+          </Text>
           {subtitle ? (
-            <Text className="mt-0.5 text-sm font-normal text-[#8b8b8b]">{subtitle}</Text>
+            <Text className="mt-1 text-sm font-medium text-slate-500">
+              {subtitle}
+            </Text>
           ) : null}
         </View>
       </View>
+      
       <View className="flex-row items-center">
         {rightText ? (
-          <Text className="mr-2 text-sm font-normal text-[#8b8b8b]">
+          <Text className="mr-2 text-sm font-semibold text-slate-400">
             {rightText}
           </Text>
         ) : null}
-        <Ionicons name="chevron-forward" size={20} color="#c0c0c0" />
+        <View 
+          className="h-8 w-8 items-center justify-center rounded-full bg-slate-100"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 1,
+          }}
+        >
+          <Ionicons name="chevron-forward" size={18} color="#94a3b8" />
+        </View>
       </View>
     </Pressable>
   );

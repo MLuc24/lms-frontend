@@ -2,6 +2,7 @@ import { View, Text, ScrollView, Image, Pressable, ActivityIndicator } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StatCard } from '@/features/profile/components/StatCard';
 import { ActionRow } from '@/features/profile/components/ActionRow';
 import { profileMock } from '@/features/profile/mock';
@@ -26,62 +27,125 @@ export default function ProfileScreen() {
     : 'Active';
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f6f7fb]">
+    <SafeAreaView className="flex-1 bg-[#f8fafc]" edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="relative px-6 pt-6">
-          <Text className="text-center text-2xl font-extrabold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>
-            Profile Overview
-          </Text>
+        {/* Header with Gradient Background */}
+        <View className="relative pb-6">
+          <LinearGradient
+            colors={['#6366f1', '#8b5cf6', '#a855f7']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="absolute inset-0 h-72"
+            style={{
+              shadowColor: '#8b5cf6',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.25,
+              shadowRadius: 16,
+              elevation: 8,
+            }}
+          />
 
-          <View className="mt-6 items-center">
+          {/* QR Code - Top Right Corner */}
+          <View className="absolute top-4 right-4">
+            <View
+              className="bg-white rounded-xl p-2"
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.12,
+                shadowRadius: 6,
+                elevation: 6,
+              }}
+            >
+              <Image
+                source={{ uri: 'https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=LMS-User-Profile' }}
+                className="w-[60px] h-[60px] rounded-lg"
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+
+          {/* Avatar Section */}
+          <View className="items-center px-6 pt-6">
             <View className="relative">
-              <View className="h-32 w-32 items-center justify-center rounded-full bg-[#e8e8e8] shadow-md">
+              {/* Avatar with enhanced shadow */}
+              <View
+                className="h-28 w-28 items-center justify-center rounded-full bg-white"
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 12,
+                  elevation: 10,
+                }}
+              >
                 {avatarUrl ? (
                   <Image
                     source={{ uri: avatarUrl }}
-                    className="h-full w-full rounded-full"
+                    className="h-[100px] w-[100px] rounded-full"
                     resizeMode="cover"
                   />
                 ) : (
                   <Image
                     source={require('../../../assets/icon.png')}
-                    className="h-full w-full rounded-full"
+                    className="h-[100px] w-[100px] rounded-full"
                     resizeMode="cover"
                   />
                 )}
               </View>
+
+              {/* Edit Button with gradient - Made smaller */}
               <Pressable
                 onPress={handlePickImage}
                 disabled={isUploading}
-                className="absolute bottom-1 right-1 h-10 w-10 items-center justify-center rounded-full bg-[#3b82f6] shadow-lg"
+                className="absolute bottom-0 right-0"
               >
-                {isUploading ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Ionicons name="create-outline" size={18} color="#fff" />
-                )}
+                <LinearGradient
+                  colors={['#6366f1', '#8b5cf6']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    shadowColor: '#6366f1',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.4,
+                    shadowRadius: 8,
+                    elevation: 8,
+                  }}
+                >
+                  {isUploading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Ionicons name="create-outline" size={16} color="#fff" />
+                  )}
+                </LinearGradient>
               </Pressable>
             </View>
+
+            {/* User Info - Fixed text colors */}
             {isLoadingProfile && !profileData ? (
-              <ActivityIndicator className="mt-4" size="small" color="#3b82f6" />
+              <ActivityIndicator className="mt-2" size="small" color="#fff" />
             ) : (
               <>
-                <Text className="mt-4 text-2xl font-extrabold text-[#1a1a1a]" style={{ fontFamily: 'System' }}>
+                <Text className="mt-2 text-xl font-black text-gray-800" style={{ fontFamily: 'System' }}>
                   {displayName}
                 </Text>
-                <Text className="mt-1 text-base font-normal text-[#8b8b8b]">
-                  Learning Spanish 🇪🇸
-                </Text>
+                <View className="mt-1 bg-white/90 rounded-full px-3 py-1">
+                  <Text className="text-xs font-semibold text-gray-600">
+                    Learning Spanish 🇪🇸
+                  </Text>
+                </View>
               </>
             )}
           </View>
         </View>
 
-        <View className="mt-6 px-6">
-          <View className="flex-row gap-3">
+        {/* Stats Section */}
+        <View className="mt-4 px-5">
+          <View className="flex-row justify-between gap-3">
             <View className="flex-1">
               <StatCard
                 icon="book"
@@ -107,7 +171,8 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View className="mt-6 px-6 gap-3">
+        {/* Menu Section */}
+        <View className="mt-8 px-5 space-y-3">
           <ActionRow
             icon="stats-chart"
             title="Learning Statistics"
@@ -130,17 +195,29 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <View className="mt-8 items-center px-6">
-          <Text className="text-sm font-normal text-[#c0c0c0]">
-            Member since {memberSince}
-          </Text>
+        {/* Footer Section */}
+        <View className="mt-10 items-center px-6">
+          <View className="items-center">
+            <View className="h-px w-32 bg-gray-300 mb-4" />
+            <Text className="text-sm font-medium text-slate-400">
+              Member since {memberSince}
+            </Text>
+          </View>
+
           <Pressable
             onPress={() => logout()}
             disabled={isLoggingOut}
-            className="mt-4"
+            className="mt-6 rounded-full px-8 py-3.5 bg-red-50 active:bg-red-100"
+            style={{
+              shadowColor: '#ef4444',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
           >
-            <Text className="text-base font-semibold text-[#ff5252]">
-              Log Out
+            <Text className="text-base font-bold text-red-500">
+              {isLoggingOut ? 'Logging Out...' : 'Log Out'}
             </Text>
           </Pressable>
         </View>

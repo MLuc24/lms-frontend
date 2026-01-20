@@ -1,37 +1,27 @@
-import { View, Text, Alert, Platform } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { Button } from '@/shared/components/Button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import {
   registerPushToken,
   sendTestPush,
+  loadNotifications,
 } from '@/features/notifications/services/notification.service';
 
-// Dynamically import notifications to avoid Expo Go warnings
-let Notifications: any = null;
-try {
-  Notifications = require('expo-notifications');
-  // Configure notification handler
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
-} catch (error) {
-  console.log('[Push] Notifications not available in this environment');
-}
+// Check if running in Expo Go
+const isExpoGo = Constants.appOwnership === 'expo';
 
 export default function HomeScreen() {
   const { isAuthenticated } = useAuth();
   const [tokenStatus, setTokenStatus] = useState<
     'idle' | 'registering' | 'registered' | 'error' | 'unavailable'
-  >('idle');
-  const [tokenMessage, setTokenMessage] = useState<string | null>(null);
+  >(isExpoGo ? 'unavailable' : 'idle');
+  const [tokenMessage, setTokenMessage] = useState<string | null>(
+    isExpoGo ? 'Push notifications require a development build' : null
+  );
   const hasRegisteredRef = useRef(false);
 
   const sendTestMutation = useMutation({
@@ -45,11 +35,16 @@ export default function HomeScreen() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated || !Notifications) {
-      if (!Notifications) {
-        setTokenStatus('unavailable');
-        setTokenMessage('Push notifications unavailable in Expo Go');
-      }
+    // Skip if Expo Go or not authenticated
+    if (isExpoGo || !isAuthenticated) {
+      return;
+    }
+
+    // Try to load notifications module
+    const Notifications = loadNotifications();
+    if (!Notifications) {
+      setTokenStatus('unavailable');
+      setTokenMessage('Push notifications not available');
       return;
     }
 
@@ -59,33 +54,9 @@ export default function HomeScreen() {
     const register = async (tokenOverride?: string) => {
       try {
         setTokenStatus('registering');
-        setTokenMessage(null);
+        setTokenMessage('Registering push token...');
 
-        // Get push token
-        let token = tokenOverride;
-        if (!token) {
-          if (!Device.isDevice) {
-            throw new Error('Push notifications only work on physical devices');
-          }
-
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-          
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-          
-          if (finalStatus !== 'granted') {
-            throw new Error('Permission not granted for push notifications');
-          }
-
-          const pushToken = await Notifications.getExpoPushTokenAsync();
-          token = pushToken.data;
-        }
-
-        const response = await registerPushToken(token);
-        console.log('[Push] Registered in app state', response);
+        const response = await registerPushToken(tokenOverride);
         
         if (!isActive) {
           return;
@@ -93,7 +64,7 @@ export default function HomeScreen() {
         
         hasRegisteredRef.current = true;
         setTokenStatus('registered');
-        setTokenMessage('Push token registered');
+        setTokenMessage('Push notifications enabled');
       } catch (error: any) {
         console.error('[Push] Registration failed', error);
         if (!isActive) {
