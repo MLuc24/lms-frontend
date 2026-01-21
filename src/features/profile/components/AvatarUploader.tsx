@@ -13,6 +13,7 @@
 import React from 'react';
 import { View, Pressable, Image, Text, ActivityIndicator } from 'react-native';
 import { cn } from '@/shared/utils/cn';
+import { getMediaUrl } from '@/shared/utils/media';
 import { useAvatarUploader } from '../hooks/useAvatarUploader';
 
 interface AvatarUploaderProps {
@@ -31,12 +32,17 @@ export function AvatarUploader({
   editable = true 
 }: AvatarUploaderProps) {
   const {
-    avatarUrl,
+    avatarUrl: rawAvatarUrl,
     isUploading,
     handlePickImage,
   } = useAvatarUploader();
 
   const sizeClasses = SIZES[size];
+  
+  // Convert relative path to full URL (unless it's a local URI)
+  const avatarUrl = rawAvatarUrl?.startsWith('file://') 
+    ? rawAvatarUrl 
+    : getMediaUrl(rawAvatarUrl);
 
   return (
     <View className="items-center">

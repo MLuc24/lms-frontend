@@ -12,6 +12,7 @@ import Animated, {
   withSequence,
 } from 'react-native-reanimated';
 import { cn } from '@/shared/utils/cn';
+import { getMediaUrl } from '@/shared/utils/media';
 
 interface CourseHeroImageProps {
   /** Image source (URL or local) */
@@ -75,7 +76,9 @@ export function CourseHeroImage({
   let imageSource: ImageSourcePropType | null = null;
   if (source && !hasError) {
     if (typeof source === 'string') {
-      imageSource = { uri: source };
+      // Convert relative path to full URL
+      const fullUrl = getMediaUrl(source);
+      imageSource = fullUrl ? { uri: fullUrl } : null;
     } else {
       imageSource = source;
     }

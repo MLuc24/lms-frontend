@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import { cn } from '@/shared/utils/cn';
+import { getMediaUrl } from '@/shared/utils/media';
 import { courseService } from '../services/course.service';
 import { courseKeys } from '../hooks/useCourses';
 import { DEFAULT_LANGUAGE_ID } from '../utils/localization';
@@ -53,6 +54,10 @@ export function CourseCard({
   // Select gradient based on course ID
   const gradientIndex = parseInt(course.courseId.slice(0, 8), 16) % gradientPresets.length;
   const gradientColors = gradientPresets[gradientIndex];
+  
+  // Get cover image URL
+  const coverImageUrl = getMediaUrl(course.coverUrl);
+  const hasCoverImage = !!coverImageUrl;
 
   // Prefetch course structure on press for instant navigation
   const handlePress = () => {
@@ -91,20 +96,41 @@ export function CourseCard({
       <View className="bg-white dark:bg-gray-800">
         {/* Hero Section with Gradient */}
         <View className="h-48 relative overflow-hidden bg-gray-200 dark:bg-gray-700">
-          <LinearGradient
-            colors={gradientColors as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-          />
+          {hasCoverImage ? (
+            <>
+              {/* Cover Image */}
+              <Image
+                source={{ uri: coverImageUrl }}
+                style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}
+                resizeMode="cover"
+              />
+              {/* Dark overlay for text readability */}
+              <LinearGradient
+                colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.6)'] as any}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+              />
+            </>
+          ) : (
+            <>
+              {/* Gradient Background (fallback) */}
+              <LinearGradient
+                colors={gradientColors as any}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+              />
+              
+              {/* Abstract Pattern Overlay */}
+              <View className="absolute inset-0 opacity-20">
+                <View className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/30" />
+                <View className="absolute -left-5 bottom-0 w-32 h-32 rounded-full bg-black/20" />
+                <View className="absolute right-1/3 top-1/2 w-24 h-24 rounded-full bg-white/20" />
+              </View>
+            </>
+          )}
           
-          {/* Abstract Pattern Overlay */}
-          <View className="absolute inset-0 opacity-20">
-            <View className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/30" />
-            <View className="absolute -left-5 bottom-0 w-32 h-32 rounded-full bg-black/20" />
-            <View className="absolute right-1/3 top-1/2 w-24 h-24 rounded-full bg-white/20" />
-          </View>
-
           {/* Status Badge */}
           {displayStatus && (
             <View className="absolute top-4 left-4">

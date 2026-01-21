@@ -8,14 +8,20 @@ import { ActionRow } from '@/features/profile/components/ActionRow';
 import { profileMock } from '@/features/profile/mock';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useAvatarUploader } from '@/features/profile/hooks/useAvatarUploader';
+import { getMediaUrl } from '@/shared/utils/media';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { logout, isLoggingOut, profile, user, isLoadingProfile } = useAuth();
-  const { avatarUrl, isUploading, handlePickImage } = useAvatarUploader();
+  const { avatarUrl: rawAvatarUrl, isUploading, handlePickImage } = useAvatarUploader();
   const { stats } = profileMock;
   const profileData = profile ?? user;
   const displayName = profileData?.displayName ?? profileMock.name;
+  
+  // Convert relative path to full URL (unless it's a local URI)
+  const avatarUrl = rawAvatarUrl?.startsWith('file://') 
+    ? rawAvatarUrl 
+    : getMediaUrl(rawAvatarUrl);
   const memberSince = profileData?.createdAt
     ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
       month: 'long',
