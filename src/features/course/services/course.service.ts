@@ -46,16 +46,21 @@ export const courseService = {
 
   /**
    * Get course with full structure (units, skills, lessons)
-   * GET /courses/:courseId/structure
+   * Temporarily returns course detail only until backend implements full structure endpoint
+   * GET /courses/:courseId
    */
   async getCourseStructure(
     courseId: string,
     languageId?: number,
   ): Promise<CourseDetailResponseDto> {
-    const query = languageId ? `?languageId=${languageId}` : '';
-    return apiClient.get<CourseDetailResponseDto>(
-      `/courses/${courseId}/structure${query}`,
-    );
+    const course = await this.getCourseById(courseId, languageId);
+    
+    // Return course with empty units array for now
+    // Units will be loaded separately by the UI if needed
+    return {
+      ...course,
+      units: [],
+    };
   },
 
   // ============ UNIT ENDPOINTS ============

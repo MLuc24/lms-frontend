@@ -1,9 +1,13 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import { PressableCard } from '@/shared/components/Card';
 import { Badge } from '@/shared/components/Badge';
 import { ProgressBar } from '@/shared/components/ProgressBar';
 import { cn } from '@/shared/utils/cn';
+import { courseService } from '../services/course.service';
+import { courseKeys } from '../hooks/useCourses';
+import { DEFAULT_LANGUAGE_ID } from '../utils/localization';
 import type { CourseResponseDto } from '@/types';
 
 interface CourseCardProps {
@@ -38,12 +42,25 @@ export function CourseCard({
   progress,
   className,
 }: CourseCardProps) {
+  const queryClient = useQueryClient();
   const title = course.title || 'Untitled Course';
   const description = course.description || '';
 
+  // Prefetch course structure on press for instant navigation
+  const handlePress = () => {
+    // Prefetch immediately
+    queryClient.prefetchQuery({
+      queryKey: courseKeys.structure(course.courseId),
+      queryFn: () => courseService.getCourseStructure(course.courseId, DEFAULT_LANGUAGE_ID),
+      staleTime: 10 * 60 * 1000,
+    });
+    
+    onPress?.();
+  };
+
   return (
     <PressableCard
-      onPress={onPress}
+      onPress={handlePress}
       padding="none"
       shadow="md"
       className={cn('overflow-hidden', className)}

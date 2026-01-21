@@ -16,7 +16,9 @@ export function useCourse(courseId: string, languageId?: number) {
     queryKey: courseKeys.detail(courseId),
     queryFn: () => courseService.getCourseById(courseId, languageId ?? DEFAULT_LANGUAGE_ID),
     enabled: !!courseId,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    retry: 2,
   });
 }
 
@@ -28,7 +30,9 @@ export function useCourseStructure(courseId: string, languageId?: number) {
     queryKey: courseKeys.structure(courseId),
     queryFn: () => courseService.getCourseStructure(courseId, languageId ?? DEFAULT_LANGUAGE_ID),
     enabled: !!courseId,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes (formerly cacheTime)
+    retry: 2,
   });
 }
 

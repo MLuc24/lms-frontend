@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import {
   FlatList,
   View,
+  Text,
   RefreshControl,
   type ListRenderItem,
 } from 'react-native';
@@ -117,7 +118,7 @@ export function CourseList({
       <EmptyState
         title="No courses found"
         description="Check back later for new courses"
-        icon={<View><Text className="text-5xl">📚</Text></View>}
+        icon={<Text className="text-5xl">📚</Text>}
       />
     );
   }, [isLoading]);
@@ -143,6 +144,3 @@ export function CourseList({
     />
   );
 }
-
-// Need to import Text for the icon
-import { Text } from 'react-native';
