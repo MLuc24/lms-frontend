@@ -162,6 +162,131 @@ export interface SendTestPushResponseDto {
   failureCount: number;
 }
 
+// ==================== HOME / DASHBOARD DTOs ====================
+
+export interface HomeUserDto {
+  userId: string;
+  displayName: string;
+  avatarUrl?: string;
+}
+
+export interface ContinueLearningDto {
+  enrollmentId: string;
+  courseId: string;
+  courseTitle: string;
+  lessonId: string;
+  lessonOrder: number;
+  lessonTitle: string;
+  lessonEstimatedMinutes?: number;
+  completedLessons: number;
+  totalLessons: number;
+  progressPercent: number;
+  remainingMinutes: number;
+}
+
+export interface DailyGoalDto {
+  targetMinutes: number;
+  learnedMinutes: number;
+  progressPercent: number;
+}
+
+export interface StreakSummaryDto {
+  currentDays: number;
+  longestDays: number;
+  freezeCount: number;
+}
+
+export interface HomeReviewSummaryDto {
+  dueCount: number;
+}
+
+export interface NotificationSummaryDto {
+  unreadCount: number;
+}
+
+export interface HomeSummaryResponseDto {
+  user: HomeUserDto;
+  continueLearning: ContinueLearningDto | null;
+  dailyGoal: DailyGoalDto;
+  streak: StreakSummaryDto;
+  review: HomeReviewSummaryDto;
+  notifications: NotificationSummaryDto;
+}
+
+export interface HomeContinueResponseDto {
+  continueLearning: ContinueLearningDto | null;
+}
+
+export interface ProgressGoalDto {
+  targetMinutes: number;
+  progressPercent: number;
+  achieved: boolean;
+}
+
+export interface ProgressTodayResponseDto {
+  date: string;
+  minutesLearned: number;
+  xpEarned: number;
+  lessonsCompleted: number;
+  streakDays: number;
+  goal: ProgressGoalDto;
+}
+
+export interface ProgressWeeklyDayDto {
+  date: string;
+  minutes: number;
+  xp: number;
+  lessonsCompleted: number;
+  goalMet: boolean;
+}
+
+export interface ProgressWeeklyResponseDto {
+  weekStart: string;
+  weekEnd: string;
+  days: ProgressWeeklyDayDto[];
+}
+
+export interface ReviewSummaryResponseDto {
+  dueCount: number;
+  overdueCount: number;
+  dueTodayCount: number;
+  nextDueAt?: string;
+}
+
+export interface ReviewQueueItemDto {
+  reviewQueueId: string;
+  itemId: string;
+  dueAt: string;
+  priority: number;
+  source: string;
+}
+
+export interface ReviewQueueResponseDto {
+  items: ReviewQueueItemDto[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface StreakDayDto {
+  date: string;
+  status: 'done' | 'today' | 'missed' | 'future' | 'frozen';
+}
+
+export interface StreakWeekDto {
+  startDate: string;
+  endDate: string;
+  days: StreakDayDto[];
+}
+
+export interface StreakResponseDto {
+  currentDays: number;
+  longestDays: number;
+  freezeCount: number;
+  lastActivityDate: string | null;
+  week: StreakWeekDto;
+}
+
 // Pagination
 export interface PaginationParams {
   page?: number;

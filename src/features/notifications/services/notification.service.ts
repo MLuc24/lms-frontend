@@ -5,6 +5,7 @@ import { getDeviceInfo } from '@/shared/utils/device';
 import type {
   DeactivatePushTokenRequestDto,
   DeactivatePushTokenResponseDto,
+  NotificationSummaryDto,
   RegisterPushTokenRequestDto,
   RegisterPushTokenResponseDto,
   SendTestPushResponseDto,
@@ -158,4 +159,8 @@ export async function sendTestPush(): Promise<SendTestPushResponseDto> {
     {}
   );
   return response;
+}
+
+export async function getNotificationSummary(): Promise<NotificationSummaryDto> {
+  return apiClient.get<NotificationSummaryDto>('/notification/summary');
 }

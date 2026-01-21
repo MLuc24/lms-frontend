@@ -157,8 +157,8 @@ class ApiClient {
     }
   }
 
-  get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint);
+  get<T>(endpoint: string, options?: RequestInit & { skipAuth?: boolean }): Promise<T> {
+    return this.request<T>(endpoint, { method: 'GET', ...options });
   }
 
   post<T>(endpoint: string, data: any, skipAuth = false): Promise<T> {
