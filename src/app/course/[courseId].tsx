@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, { FadeIn, FadeInDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import {
   CourseHeader,
   UnitAccordion,
@@ -19,6 +20,8 @@ import { EmptyState } from '@/shared/components/EmptyState';
 export default function CourseDetailScreen() {
   const { courseId } = useLocalSearchParams<{ courseId: string }>();
   const router = useRouter();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [isContentVisible, setIsContentVisible] = useState(false);
 
   // Fetch course data
   const {
@@ -107,6 +110,19 @@ export default function CourseDetailScreen() {
     [course, progress, completedLessonIds],
   );
 
+  // Handle View All Units - toggle visibility
+  const handleViewAllUnits = useCallback(() => {
+    setIsContentVisible((prev) => !prev);
+  }, []);
+
+  // Animated style for content section
+  const contentAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      maxHeight: withTiming(isContentVisible ? 5000 : 0, { duration: 400 }),
+      opacity: withTiming(isContentVisible ? 1 : 0, { duration: 300 }),
+    };
+  }, [isContentVisible]);
+
   // Loading state
   if (courseLoading) {
     return (
@@ -143,16 +159,33 @@ export default function CourseDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['bottom']}>
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Back button (absolute) */}
-        <Pressable
-          onPress={handleBack}
-          className="absolute top-12 left-4 z-10 w-10 h-10 rounded-full bg-black/20 items-center justify-center"
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
+      <ScrollView 
+        ref={scrollViewRef} 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
+        {/* Back button (floating) */}
+        <Animated.View
+          entering={FadeIn.duration(400)}
+          className="absolute top-4 left-4 z-20"
         >
-          <Ionicons name="arrow-back" size={22} color="white" />
-        </Pressable>
+          <Pressable
+            onPress={handleBack}
+            className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 items-center justify-center"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 5,
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
+            <Ionicons name="arrow-back" size={22} color="#374151" />
+          </Pressable>
+        </Animated.View>
 
         {/* Course Header */}
         <CourseHeader
@@ -162,35 +195,80 @@ export default function CourseDetailScreen() {
           isEnrolling={enrollMutation.isPending}
           onEnroll={handleEnroll}
           onContinue={handleContinue}
+          onViewAllUnits={handleViewAllUnits}
+          isContentVisible={isContentVisible}
         />
 
-        {/* Units List */}
-        <View className="px-4 py-6 gap-4">
-          <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Course Content
-          </Text>
-
-          {course.units?.map((unit, index) => (
-            <UnitAccordion
-              key={unit.unitId}
-              unit={unit}
-              index={index}
-              progress={getUnitProgress(index)}
-              isLocked={!enrollment && index > 0}
-              defaultExpanded={index === 0}
-              onSkillPress={handleSkillPress}
-              completedLessonIds={completedLessonIds}
-            />
-          ))}
-
-          {(!course.units || course.units.length === 0) && (
-            <View className="items-center py-8">
-              <Text className="text-gray-500 dark:text-gray-400">
-                No content available yet
-              </Text>
+        {/* Course Content Section */}
+        <Animated.View 
+          style={contentAnimatedStyle}
+          className="overflow-hidden px-4 pt-8 pb-4"
+        >
+          {/* Section Header */}
+          <View className="mb-6">
+            <View className="flex-row items-center justify-between mb-2">
+              <View>
+                <Text className="text-2xl font-black text-gray-900 dark:text-white">
+                  Course Content
+                </Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {course.units?.length || 0} units • {progress?.totalLessons || 0} lessons
+                </Text>
+              </View>
+              
+              {/* Progress indicator if enrolled */}
+              {enrollment && (
+                <View className="items-end">
+                  <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    Overall
+                  </Text>
+                  <Text className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                    {progress?.progressPercentage || 0}%
+                  </Text>
+                </View>
+              )}
             </View>
+            
+            {/* Divider */}
+            <View className="h-1 rounded-full bg-blue-500 mt-2" />
+          </View>
+
+          {/* Units List */}
+          <View className="gap-4">
+            {course.units?.map((unit, index) => (
+              <UnitAccordion
+                key={unit.unitId}
+                unit={unit}
+                index={index}
+                progress={getUnitProgress(index)}
+                isLocked={!enrollment && index > 0}
+                defaultExpanded={index === 0}
+                onSkillPress={handleSkillPress}
+                completedLessonIds={completedLessonIds}
+              />
+            ))}
+          </View>
+
+          {/* Empty state */}
+          {(!course.units || course.units.length === 0) && (
+            <Animated.View 
+              entering={FadeInDown.duration(500)}
+              className="items-center py-16"
+            >
+              <View 
+                className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center mb-4"
+              >
+                <Ionicons name="book-outline" size={40} color="#9CA3AF" />
+              </View>
+              <Text className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                No Content Yet
+              </Text>
+              <Text className="text-sm text-gray-500 dark:text-gray-400 text-center px-8">
+                This course doesn't have any units or lessons yet
+              </Text>
+            </Animated.View>
           )}
-        </View>
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );

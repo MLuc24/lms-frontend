@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   FlatList,
   View,
@@ -7,10 +7,9 @@ import {
   type ListRenderItem,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { CourseCard } from './CourseCard';
+import { AnimatedCourseCard } from './AnimatedCourseCard';
 import { CourseCardSkeleton } from './CourseCardSkeleton';
-import { EmptyState } from '@/shared/components/EmptyState';
-import { useInfiniteCourses, useMyEnrollments, useCourseProgress } from '../hooks';
+import { useInfiniteCourses, useMyEnrollments } from '../hooks';
 import type { CourseResponseDto, CourseQueryParams } from '@/types';
 import { cn } from '@/shared/utils/cn';
 
@@ -56,8 +55,15 @@ export function CourseList({
       return {
         isEnrolled: !!enrollment,
         enrollmentId: enrollment?.enrollmentId,
+        status: enrollment?.status,
       };
     },
+    [enrollments],
+  );
+
+  // Memoize enrolled course IDs for progress fetching
+  const enrolledCourseIds = useMemo(
+    () => enrollments?.data?.map((e) => e.courseId) ?? [],
     [enrollments],
   );
 
@@ -79,14 +85,30 @@ export function CourseList({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderItem: ListRenderItem<CourseResponseDto> = useCallback(
-    ({ item }) => {
-      const { isEnrolled } = getEnrollmentInfo(item.courseId);
+    ({ item, index }) => {
+      const { isEnrolled, status } = getEnrollmentInfo(item.courseId);
+      
+      // Determine status badge
+      let cardStatus: 'in-progress' | 'new' | 'completed' | undefined;
+      if (isEnrolled) {
+        if (status === 'completed') {
+          cardStatus = 'completed';
+        } else if (status === 'ongoing') {
+          cardStatus = 'in-progress';
+        }
+      } else if (index < 3) {
+        // Mark first 3 non-enrolled as "new"
+        cardStatus = 'new';
+      }
+
       return (
-        <View className={cn(numColumns === 2 ? 'flex-1 p-1' : 'px-4 py-2')}>
-          <CourseCard
+        <View className={cn(numColumns === 2 ? 'flex-1 px-2 py-2' : 'px-6 py-3')}>
+          <AnimatedCourseCard
             course={item}
+            index={index}
             onPress={() => handleCoursePress(item.courseId)}
             isEnrolled={isEnrolled}
+            status={cardStatus}
           />
         </View>
       );
@@ -97,7 +119,7 @@ export function CourseList({
   const renderFooter = useCallback(() => {
     if (!isFetchingNextPage) return null;
     return (
-      <View className="p-4">
+      <View className="px-6 py-3">
         <CourseCardSkeleton />
       </View>
     );
@@ -106,7 +128,7 @@ export function CourseList({
   const renderEmpty = useCallback(() => {
     if (isLoading) {
       return (
-        <View className="px-4 gap-4">
+        <View className="px-6 gap-6 py-4">
           {[1, 2, 3].map((i) => (
             <CourseCardSkeleton key={i} />
           ))}
@@ -115,11 +137,15 @@ export function CourseList({
     }
 
     return (
-      <EmptyState
-        title="No courses found"
-        description="Check back later for new courses"
-        icon={<Text className="text-5xl">📚</Text>}
-      />
+      <View className="flex-1 items-center justify-center px-8 py-12">
+        <Text className="text-6xl mb-4">📚</Text>
+        <Text className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">
+          No courses found
+        </Text>
+        <Text className="text-base text-gray-500 dark:text-gray-400 text-center">
+          Check back later for new courses
+        </Text>
+      </View>
     );
   }, [isLoading]);
 

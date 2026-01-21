@@ -186,6 +186,8 @@ export interface CourseResponseDto {
   baseLanguageId: number;
   levelId: number;
   isPublished: boolean;
+  coverAssetId?: string;
+  coverUrl?: string;
   localizations: CourseLocalization[];
   title?: string;
   description?: string;
