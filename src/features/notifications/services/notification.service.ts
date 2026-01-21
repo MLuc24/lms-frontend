@@ -77,48 +77,79 @@ async function ensureNotificationPermission(): Promise<void> {
 export async function registerPushToken(
   tokenOverride?: string
 ): Promise<RegisterPushTokenResponseDto> {
-  await ensureNotificationPermission();
+  // Skip if in Expo Go
+  if (isExpoGo()) {
+    console.log('[Push] Skipping registration in Expo Go');
+    return { 
+      success: true, 
+      message: 'Push notifications are not supported in Expo Go',
+      deviceId: 'expo-go-device'
+    };
+  }
 
-  const Notif = loadNotifications();
-  const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
-  const deviceInfo = getDeviceInfo();
-  
-  // Map platform to provider (fcm for Android, apns for iOS)
-  const provider = Platform.OS === 'ios' ? 'apns' : 'fcm';
-  
-  const payload: RegisterPushTokenRequestDto = {
-    token,
-    provider,
-    platform: deviceInfo.platform,
-    deviceModel: deviceInfo.deviceModel,
-    osVersion: deviceInfo.osVersion,
-    appVersion: deviceInfo.appVersion,
-    locale: deviceInfo.locale,
-  };
+  try {
+    await ensureNotificationPermission();
 
-  const response = await apiClient.post<RegisterPushTokenResponseDto>(
-    '/notification/push-tokens',
-    payload
-  );
-  return response;
+    const Notif = loadNotifications();
+    const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
+    const deviceInfo = getDeviceInfo();
+    
+    // Map platform to provider (fcm for Android, apns for iOS)
+    const provider = Platform.OS === 'ios' ? 'apns' : 'fcm';
+    
+    const payload: RegisterPushTokenRequestDto = {
+      token,
+      provider,
+      platform: deviceInfo.platform,
+      deviceModel: deviceInfo.deviceModel,
+      osVersion: deviceInfo.osVersion,
+      appVersion: deviceInfo.appVersion,
+      locale: deviceInfo.locale,
+    };
+
+    const response = await apiClient.post<RegisterPushTokenResponseDto>(
+      '/notification/push-tokens',
+      payload
+    );
+    return response;
+  } catch (error) {
+    console.log('[Push] Failed to register token:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to register',
+      deviceId: 'unknown'
+    };
+  }
 }
 
 export async function deactivatePushToken(
   tokenOverride?: string
 ): Promise<DeactivatePushTokenResponseDto> {
+  // Skip if in Expo Go
+  if (isExpoGo()) {
+    console.log('[Push] Skipping deactivation in Expo Go');
+    return { success: true, message: 'Skipped in Expo Go' };
+  }
+
   const Notif = loadNotifications();
   if (!Notif) {
-    throw new Error('Notifications module not available');
+    console.log('[Push] Notifications module not available');
+    return { success: true, message: 'Notifications not available' };
   }
   
-  const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
-  const payload: DeactivatePushTokenRequestDto = { token };
+  try {
+    const token = tokenOverride ?? (await Notif.getExpoPushTokenAsync()).data;
+    const payload: DeactivatePushTokenRequestDto = { token };
 
-  const response = await apiClient.post<DeactivatePushTokenResponseDto>(
-    '/notification/push-tokens/deactivate',
-    payload
-  );
-  return response;
+    const response = await apiClient.post<DeactivatePushTokenResponseDto>(
+      '/notification/push-tokens/deactivate',
+      payload
+    );
+    return response;
+  } catch (error) {
+    console.log('[Push] Failed to deactivate token:', error);
+    return { success: true, message: 'Failed to deactivate' };
+  }
 }
 
 export async function sendTestPush(): Promise<SendTestPushResponseDto> {

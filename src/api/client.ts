@@ -21,14 +21,6 @@ class ApiClient {
 
   constructor() {
     this.baseUrl = ENV.API_URL;
-    
-    // Validate base URL
-    if (!this.baseUrl || this.baseUrl === 'undefined') {
-      console.error('❌ API base URL is not configured properly!');
-      console.error('ENV.API_URL:', this.baseUrl);
-      console.error('Check your .env file and restart the app');
-    }
-    
   }
 
   /**
