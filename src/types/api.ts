@@ -323,3 +323,121 @@ export interface SkillMasteryResponseDto {
 export interface CourseDetailResponseDto extends CourseResponseDto {
   units: UnitResponseDto[];
 }
+
+// ==================== EXERCISE DTOs ====================
+
+import type { ExerciseType, ExerciseItemType, SessionMode } from './enums';
+
+// Exercise Option Response
+export interface ExerciseOptionResponseDto {
+  optionId: string;
+  optionText: string;
+  optionAssetUrl?: string;
+}
+
+// Exercise Item Response
+export interface ExerciseItemResponseDto {
+  exerciseItemId: string;
+  itemOrder: number;
+  itemType: ExerciseItemType;
+  options?: ExerciseOptionResponseDto[];
+}
+
+// Exercise Prompt Response
+export interface ExercisePromptResponseDto {
+  promptText: string;
+  promptAssetUrl?: string;
+}
+
+// Exercise List Item Response
+export interface ExerciseResponseDto {
+  exerciseId: string;
+  lessonId: string;
+  exerciseType: ExerciseType;
+  difficulty: number;
+  points: number;
+  timeLimitSeconds?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Exercise Detail Response (with prompt & items)
+export interface ExerciseDetailResponseDto extends ExerciseResponseDto {
+  prompt?: ExercisePromptResponseDto;
+  items: ExerciseItemResponseDto[];
+}
+
+// Exercise List Response
+export interface ExerciseListResponseDto {
+  data: ExerciseResponseDto[];
+  total: number;
+}
+
+// ==================== SESSION DTOs ====================
+
+// Start Session Request
+export interface StartSessionRequestDto {
+  mode: SessionMode;
+}
+
+// Session Response
+export interface SessionResponseDto {
+  sessionId: string;
+  lessonId: string;
+  mode: SessionMode;
+  startedAt: string;
+  endedAt?: string;
+}
+
+// Attempt Response
+export interface AttemptResponseDto {
+  attemptId: string;
+  attemptNumber: number;
+}
+
+// Submit Answer Request
+export interface SubmitAnswerRequestDto {
+  exerciseItemId: string;
+  submittedText?: string;
+  selectedOptionId?: string;
+  timeSpentSeconds?: number;
+}
+
+// Submit Answer Response
+export interface SubmitAnswerResponseDto {
+  isCorrect: boolean;
+  scoreAwarded: number;
+  correctAnswer?: string;
+  explanation?: string;
+}
+
+// Submit Attempt Request (batch submit all answers)
+export interface SubmitAttemptRequestDto {
+  responses: SubmitAnswerRequestDto[];
+}
+
+// Response Result in Attempt
+export interface ResponseResultDto {
+  exerciseItemId: string;
+  isCorrect: boolean;
+  scoreAwarded: number;
+  correctAnswer?: string;
+}
+
+// Attempt Result Response
+export interface AttemptResultResponseDto {
+  attemptId: string;
+  totalScore: number;
+  maxScore: number;
+  percentage: number;
+  details: ResponseResultDto[];
+}
+
+// Complete Session Response
+export interface CompleteSessionResponseDto {
+  sessionId: string;
+  lessonId: string;
+  endedAt: string;
+  bestScore: number;
+  totalAttempts: number;
+}

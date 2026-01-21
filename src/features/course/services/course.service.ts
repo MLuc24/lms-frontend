@@ -46,71 +46,17 @@ export const courseService = {
 
   /**
    * Get course with full structure (units, skills, lessons)
-   * Temporarily returns course detail only until backend implements full structure endpoint
-   * GET /courses/:courseId
+   * GET /courses/:courseId/structure
    */
   async getCourseStructure(
     courseId: string,
     languageId?: number,
   ): Promise<CourseDetailResponseDto> {
-    const course = await this.getCourseById(courseId, languageId);
-    
-    // Return course with empty units array for now
-    // Units will be loaded separately by the UI if needed
-    return {
-      ...course,
-      units: [],
-    };
-  },
-
-  // ============ UNIT ENDPOINTS ============
-
-  /**
-   * Get units for a course version
-   * GET /courses/:courseId/units
-   */
-  async getUnits(
-    courseId: string,
-    languageId?: number,
-  ): Promise<UnitResponseDto[]> {
     const query = languageId ? `?languageId=${languageId}` : '';
-    return apiClient.get<UnitResponseDto[]>(`/courses/${courseId}/units${query}`);
-  },
-
-  // ============ SKILL ENDPOINTS ============
-
-  /**
-   * Get skills for a unit
-   * GET /units/:unitId/skills
-   */
-  async getSkills(
-    unitId: string,
-    languageId?: number,
-  ): Promise<SkillResponseDto[]> {
-    const query = languageId ? `?languageId=${languageId}` : '';
-    return apiClient.get<SkillResponseDto[]>(`/units/${unitId}/skills${query}`);
+    return apiClient.get<CourseDetailResponseDto>(`/courses/${courseId}/structure${query}`);
   },
 
   // ============ LESSON ENDPOINTS ============
-
-  /**
-   * Get lessons for a skill
-   * GET /skills/:skillId/lessons
-   */
-  async getLessons(
-    skillId: string,
-    languageId?: number,
-  ): Promise<LessonListResponseDto> {
-    const query = languageId ? `?languageId=${languageId}` : '';
-    return apiClient.get<LessonListResponseDto>(
-      `/skills/${skillId}/lessons${query}`,
-    );
-  },
-
-  /**
-   * Get lesson by ID
-   * GET /lessons/:lessonId
-   */
   async getLessonById(
     lessonId: string,
     languageId?: number,

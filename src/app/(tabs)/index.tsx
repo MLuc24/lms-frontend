@@ -2,6 +2,7 @@ import { View, Text, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 import { Button } from '@/shared/components/Button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -16,6 +17,7 @@ const isExpoGo = Constants.appOwnership === 'expo';
 
 export default function HomeScreen() {
   const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [tokenStatus, setTokenStatus] = useState<
     'idle' | 'registering' | 'registered' | 'error' | 'unavailable'
   >(isExpoGo ? 'unavailable' : 'idle');
@@ -105,7 +107,9 @@ export default function HomeScreen() {
         <Text className="text-gray-600 dark:text-gray-400 mt-2">
           Welcome to LMS!
         </Text>
-        <View className="mt-6 w-full px-6">
+        
+        <View className="mt-8 w-full px-6 gap-3">
+          {/* Push Notification Test */}
           <Button
             variant="primary"
             isLoading={sendTestMutation.isPending}
@@ -114,7 +118,8 @@ export default function HomeScreen() {
           >
             Send test notification
           </Button>
-          <Text className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+          
+          <Text className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
             {tokenMessage ||
               (isAuthenticated
                 ? 'Registering push token...'

@@ -49,12 +49,28 @@ export enum LessonType {
 }
 
 export enum ExerciseType {
-  MULTIPLE_CHOICE = 'mcq',
+  MCQ = 'mcq',
   FILL_BLANK = 'fill_blank',
   MATCHING = 'matching',
-  LISTENING = 'listening',
+  REORDER = 'reorder',
+  TRANSLATION = 'translation',
+  LISTENING_MCQ = 'listening_mcq',
   SPEAKING = 'speaking',
+  DICTATION = 'dictation',
   WRITING = 'writing',
+}
+
+export enum ExerciseItemType {
+  QUESTION = 'question',
+  PAIR = 'pair',
+  BLANK = 'blank',
+  TOKEN = 'token',
+}
+
+export enum SessionMode {
+  LEARN = 'learn',
+  REVIEW = 'review',
+  TEST = 'test',
 }
 
 // ============ PROGRESS & ENROLLMENT ENUMS ============
