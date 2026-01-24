@@ -446,3 +446,51 @@ export interface SkillMasteryResponseDto {
 export interface CourseDetailResponseDto extends CourseResponseDto {
   units: UnitResponseDto[];
 }
+
+// ==================== PRACTICE SESSION DTOs (NEW) ====================
+
+export interface StartPracticeSessionRequestDto {
+  mode: 'learn' | 'review' | 'test';
+}
+
+export interface StartPracticeSessionResponseDto {
+  sessionId: string;
+  lessonId: string;
+  mode: 'learn' | 'review' | 'test';
+  startedAt: string;
+}
+
+export interface EndPracticeSessionResponseDto {
+  sessionId: string;
+  endedAt: string;
+  durationMinutes: number;
+}
+
+// ==================== REVIEW DTOs (NEW) ====================
+
+export interface SubmitReviewRequestDto {
+  itemId: string;
+  isCorrect: boolean;
+  userAnswer?: string;
+}
+
+export interface SubmitReviewResponseDto {
+  success: boolean;
+  itemId: string;
+  nextReviewAt: string;
+  newStage: number;
+  intervalDays: number;
+}
+
+// ==================== NOTIFICATION DTOs (NEW) ====================
+
+export interface MarkNotificationReadResponseDto {
+  success: boolean;
+  notificationId: string;
+  readAt: string;
+}
+
+export interface MarkAllNotificationsReadResponseDto {
+  success: boolean;
+  markedCount: number;
+}

@@ -10,6 +10,8 @@ import type {
   ReviewQueueResponseDto,
   ReviewSummaryResponseDto,
   StreakResponseDto,
+  SubmitReviewRequestDto,
+  SubmitReviewResponseDto,
 } from '@/types';
 
 export interface ProgressTodayParams {
@@ -88,5 +90,22 @@ export const dashboardService = {
     return apiClient.get<ReviewQueueResponseDto>(
       `/review/queue${queryString ? `?${queryString}` : ''}`,
     );
+  },
+
+  /**
+   * Submit a review answer
+   * POST /review/submit
+   */
+  async submitReview(
+    itemId: string,
+    isCorrect: boolean,
+    userAnswer?: string
+  ): Promise<SubmitReviewResponseDto> {
+    const data: SubmitReviewRequestDto = {
+      itemId,
+      isCorrect,
+      userAnswer,
+    };
+    return apiClient.post<SubmitReviewResponseDto>('/review/submit', data);
   },
 };

@@ -5,6 +5,8 @@ import { getDeviceInfo } from '@/shared/utils/device';
 import type {
   DeactivatePushTokenRequestDto,
   DeactivatePushTokenResponseDto,
+  MarkAllNotificationsReadResponseDto,
+  MarkNotificationReadResponseDto,
   NotificationSummaryDto,
   RegisterPushTokenRequestDto,
   RegisterPushTokenResponseDto,
@@ -82,7 +84,6 @@ export async function registerPushToken(
   if (isExpoGo()) {
     console.log('[Push] Skipping registration in Expo Go');
     return { 
-      success: true, 
       message: 'Push notifications are not supported in Expo Go',
       deviceId: 'expo-go-device'
     };
@@ -116,7 +117,6 @@ export async function registerPushToken(
   } catch (error) {
     console.log('[Push] Failed to register token:', error);
     return {
-      success: false,
       message: error instanceof Error ? error.message : 'Failed to register',
       deviceId: 'unknown'
     };
@@ -129,13 +129,13 @@ export async function deactivatePushToken(
   // Skip if in Expo Go
   if (isExpoGo()) {
     console.log('[Push] Skipping deactivation in Expo Go');
-    return { success: true, message: 'Skipped in Expo Go' };
+    return { message: 'Skipped in Expo Go' };
   }
 
   const Notif = loadNotifications();
   if (!Notif) {
     console.log('[Push] Notifications module not available');
-    return { success: true, message: 'Notifications not available' };
+    return { message: 'Notifications not available' };
   }
   
   try {
@@ -149,7 +149,7 @@ export async function deactivatePushToken(
     return response;
   } catch (error) {
     console.log('[Push] Failed to deactivate token:', error);
-    return { success: true, message: 'Failed to deactivate' };
+    return { message: 'Failed to deactivate' };
   }
 }
 
@@ -163,4 +163,20 @@ export async function sendTestPush(): Promise<SendTestPushResponseDto> {
 
 export async function getNotificationSummary(): Promise<NotificationSummaryDto> {
   return apiClient.get<NotificationSummaryDto>('/notification/summary');
+}
+
+export async function markNotificationRead(
+  notificationId: string
+): Promise<MarkNotificationReadResponseDto> {
+  return apiClient.put<MarkNotificationReadResponseDto>(
+    `/notification/${notificationId}/read`,
+    {}
+  );
+}
+
+export async function markAllNotificationsRead(): Promise<MarkAllNotificationsReadResponseDto> {
+  return apiClient.put<MarkAllNotificationsReadResponseDto>(
+    '/notification/read-all',
+    {}
+  );
 }
